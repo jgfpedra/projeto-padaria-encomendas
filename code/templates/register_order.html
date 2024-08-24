@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Order</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Register Order</h1>
+    <form method="POST">
+        <label for="cellphone">Cellphone:</label>
+        <input type="text" id="cellphone" name="cellphone" required>
+        <label for="details">Order Details:</label>
+        <input type="text" id="details" name="details" required>
+        <button type="submit">Register Order</button>
+    </form>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

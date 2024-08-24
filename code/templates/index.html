@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delivery Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Delivery Website</h1>
+    <nav>
+        <a href="{{ url_for('register_user') }}">Register User</a>
+        <a href="{{ url_for('register_order') }}">Register Order</a>
+        <a href="{{ url_for('manage_orders') }}">Manage Orders</a>
+    </nav>
+    <p>Welcome to the Delivery Website. Use the navigation links to get started.</p>
+</body>
+</html>
