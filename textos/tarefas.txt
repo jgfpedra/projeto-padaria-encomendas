@@ -1,0 +1,3 @@
+Logica
+
+Fazer UML para bd

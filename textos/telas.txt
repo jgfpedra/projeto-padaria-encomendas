@@ -1,0 +1,105 @@
+--> login (operador)
+  ---> copiar banco com usuarios do vr
+--> index
+  ---> pegar dados estatisticos das tabelas dos bancos
+    -> quantidade de venda hoje
+    -> quantidade de venda por semana
+  --> barra de menu
+    --> menu:
+      --> volta para index
+    --> cadastrar:
+        --> cliente
+          -->pesquisar.cliente
+            --> sub-menu
+              --> ferramentas
+                --> pesquisar
+                --> incluir
+                  --> cliente.cadastrar
+                --> deletar
+                --> editar
+              --> pesquisa
+                --> codigo, nome, etc
+            --> tela resultados
+              --> mostra a tabela de clientes do bd
+          -->cadastrar.cliente
+            --> sub-menu
+              --> salvar
+              --> cancelar
+            --> tela cadastro
+              --> mostra todos os campos
+          --> popup.cliente
+            --> deseja salvar as mudancas --> caso tenha alguma
+        -->impressora
+          --> pesquisar.impressora
+            --> sub-menu
+              --> pesquisar
+              --> incluir
+                --> cadastrar.impressora
+              --> deletar
+            --> pesquisa
+              --> codigo, descricao, endereco, etc
+            --> tela resultados
+              --> campos db
+          --> cadastrar.impressora
+            --> sub-menu
+              --> Salvar
+              --> cancelar
+            --> tela cadastro
+              --> todos os campos bd
+          --> popup.impressora
+            --> deseja salvar as mudancas --> caso tenha alguma
+        --> encomendas
+          --> lancamento.encomendas.html
+            --> sub-menu
+              --> Pesquisar
+                --> pesquisar.encomendas.html
+              --> Imprimir
+              --> Deletar
+              --> Estornar
+              --> Finalizar
+                  --> Apos clicado, vai aparecer no campo de produtos
+                    --> Entrega
+                    --> Desconto
+                  --> popup.finalizar.encomendas.html
+              --> Relatorio
+                --> popup.visualizar_historico.encomendas.html
+              --> Historico
+                --> popup.historico.encomendas.html
+              --> blocos
+                --> bloco lateral direito
+                  --> Input:
+                    --> Telefone e produtos
+                  --> Output:
+                    --> Subtotal
+                    --> Desconto
+                    --> Entrega
+                    --> Total  
+            --> pesquisar.encomendas.html
+              --> sub-menu
+                --> Pesquisar
+                --> Carregar
+              --> Blocos
+                --> tela campos
+                  --> campos para filtrar a pesquisa
+                --> tela resultados
+                  --> campos do bd
+                --> tela estatistica
+                  --> mostrar totais de alguns dados
+            --> popup.finalizar.encomendas.html
+              --> tela com confirmacao
+            --> popup.salvar.encomendas.html
+              --> tela com confirmacao
+            --> popup.historico.encomendas.html
+              --> sub-menu
+                --> Setas
+                --> Carregar
+                --> Historico
+              --> sub-menu com informacoes
+                --> data, etc
+              --> Tela resultados
+                --> campos bd
+              --> Tela estatistica
+                --> soma valores
+
+Link:
+https://www.figma.com/design/qYLqaVtNwXA2borc9Uo8Ut/Projeto-Encomendas?node-id=1-3&t=jTTmGobzfwUtNjr9-1
