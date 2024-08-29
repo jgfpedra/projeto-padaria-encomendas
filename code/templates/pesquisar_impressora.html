@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<head>
+  <link rel="stylesheet" href="static/pesquisar_impressora.css">
+</head>
+    <div class="button-container">
+        <button>Pesquisar</button>
+        <button><a href="{{ url_for('impressora_cadastrar') }}">Incluir</a></button>
+        <button>Deletar</button>
+        <button>Editar</button>
+    </div>
+
+    <div class="input-container">
+        <label>Codigo <input type="text" name="codigo"></label>
+        <label>Descricao <input type="text" name="descricao"></label>
+        <label>Endereco (IP) <input type="text" name="endereco"></label>
+        <label>Situacao <input type="text" name="situacao"></label>
+        <label>Loja <input type="text" name="loja"></label>
+    </div>
+
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Descricao</th>
+                <th>Endereco</th>
+                <th>Situacao</th>
+                <th>Loja</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- This is where the data from the database will be populated -->
+            <tr>
+                <td colspan="6">Campos preenchidos pelo banco de dados</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

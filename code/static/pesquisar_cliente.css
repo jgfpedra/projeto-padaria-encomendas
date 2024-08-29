@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.input-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.input-container label {
+    grid-column: span 3;
+}
+
+.input-container input {
+    padding: 5px;
+    width: 100%;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.results-table, .results-table th, .results-table td {
+    border: 1px solid black;
+}
+
+.results-table th, .results-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #f2f2f2;
+}

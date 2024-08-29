@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <head>
+    <link rel="stylesheet" href="static/impressora_cadastrar.css">
+  </head>
+
+  <!-- Top buttons for saving or canceling the operation -->
+  <div class="button-container">
+      <button>Salvar</button>
+      <button>Cancelar</button>
+  </div>
+
+  <!-- Client registration form section -->
+  <div class="form-container">
+      <div class="form-fields">
+          <label>Codigo <input type="text" name="codigo"></label>
+          <label>Loja <input type="text" name="loja"></label>
+          <label>Descricao <input type="text" name="descricao"></label>
+          <label>Endereco <input type="text" name="endereco"></label>
+          <label>Tipo Impressao<input type="text" name="tipo_impressao"></label>
+          <label>Modelo Impressora <input type="text" name="modelo_impressora"></label>
+          <label>Porta <input type="text" name="porta"></label>
+          <label>Configuracao <input type="text" name="configuracao"></label>
+          <label>Utiliza Guilhotina <input type="text" name="utiliza_guilhotina"></label>
+      </div>
+  </div>
+
+  <!-- Bottom buttons for saving or exiting -->
+  <div class="button-container">
+      <button>Salvar</button>
+      <button>Sair</button>
+  </div>
+{% endblock %}

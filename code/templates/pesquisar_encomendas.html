@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<head>
+  <link rel="stylesheet" href="static/pesquisar_cliente.css">
+</head>
+    <div class="button-container">
+        <button>Pesquisar</button>
+        <button>Carregar</button>
+    </div>
+
+    <div class="input-container">
+        <label>Codigo <input type="text" name="codigo"></label>
+        <label>Tipo <input type="text" name="nome"></label>
+        <label>Nome <input type="text" name="telefone"></label>
+        <label>Telefone <input type="text" name="municipio"></label>
+        <label>Municipio <input type="text" name="endereco"></label>
+        <label>Periodo <input type="text" name="situacao"></label>
+        <label>Situacao <input type="text" name="situacao"></label>
+        <label>Loja <input type="text" name="situacao"></label>
+    </div>
+
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Operador</th>
+                <th>Endereco</th>
+                <th>Situacao</th>
+                <th>Valor Total</th>
+                <th>Importado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- This is where the data from the database will be populated -->
+            <tr>
+                <td colspan="8">Campos preenchidos pelo banco de dados</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class='total-container'>
+      <h1> Totais </h1>
+    </div>
+{% endblock %}

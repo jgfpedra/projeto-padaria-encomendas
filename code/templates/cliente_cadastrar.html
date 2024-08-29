@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <head>
+    <link rel="stylesheet" href="static/cliente_cadastrar.css">
+  </head>
+
+  <!-- Top buttons for saving or canceling the operation -->
+  <div class="button-container">
+      <button>Salvar</button>
+      <button>Cancelar</button>
+  </div>
+
+  <!-- Client registration form section -->
+  <div class="form-container">
+      <div class="form-fields">
+          <label>Codigo <input type="text" name="codigo"></label>
+          <label>Nome <input type="text" name="nome"></label>
+          <label>Endereco <input type="text" name="endereco"></label>
+          <label>Numero <input type="text" name="numero"></label>
+          <label>Bairro <input type="text" name="bairro"></label>
+          <label>Complemento <input type="text" name="complemento"></label>
+          <label>Regiao <input type="text" name="regiao"></label>
+          <label>Municipio <input type="text" name="municipio"></label>
+          <label>Observacao <input type="text" name="observacao"></label>
+      </div>
+
+      <!-- Section for adding phone numbers -->
+      <div class="phone-container">
+          <label>Telefones</label>
+          <textarea rows="10" cols="30"></textarea>
+          <div class="button-container">
+              <button>Incluir</button>
+              <button>Remover</button>
+              <button>Editar</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Bottom buttons for saving or exiting -->
+  <div class="button-container">
+      <button>Salvar</button>
+      <button>Sair</button>
+  </div>
+{% endblock %}

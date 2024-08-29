@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<head>
+  <link rel="stylesheet" href="static/encomenda.css">
+</head>
+<!-- First division with buttons -->
+<div class="button-container">
+    <button>Pesquisar</button>
+    <button>Imprimir</button>
+    <button>Deletar</button>
+    <button>Estornar</button>
+    <button>Finalizar</button>
+    <button>Relatório</button>
+    <button>Histórico</button>
+</div>
+
+<!-- Second division with grids -->
+<div class="main-grid">
+    <!-- First grid (3 sections) -->
+    <div class="info-grid">
+        <!-- Order information -->
+        <div class="order-info">
+            <h3>Informações do Pedido</h3>
+            <label>Loja: <span>Loja Exemplo</span></label>
+            <label>Número Venda: <span>12345</span></label>
+            <label>Data e Hora Criação: <span>01/01/2024 12:00</span></label>
+            <label>Situação: <span>Em Andamento</span></label>
+            <label>Data Encomenda: <span>01/01/2024</span></label>
+            <label>Hora Encomenda: <span>12:00</span></label>
+        </div>
+
+        <!-- Client information -->
+        <div class="client-info">
+            <h3>Informações do Cliente</h3>
+            <label>Código: <span>001</span></label>
+            <label>Nome: <span>John Doe</span></label>
+            <label>Telefone: <span>(123) 456-7890</span></label>
+            <label>Município: <span>São Paulo</span></label>
+            <label>Cidade: <span>São Paulo</span></label>
+            <label>Bairro: <span>Centro</span></label>
+            <label>Endereço: <span>Rua Exemplo</span></label>
+            <label>Número: <span>100</span></label>
+            <label>Complemento: <span>Apto 101</span></label>
+            <label>Observação: <span>Nenhuma</span></label>
+        </div>
+
+        <!-- Products information -->
+        <div class="product-info">
+            <h3>Produtos no Pedido</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Preço Venda</th>
+                        <th>Preço Total</th>
+                        <th>Setor</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows populated from database -->
+                    <tr>
+                        <td>001</td>
+                        <td>Produto A</td>
+                        <td>2</td>
+                        <td>R$ 10,00</td>
+                        <td>R$ 20,00</td>
+                        <td>Alimentos</td>
+                        <td>Nenhuma</td>
+                    </tr>
+                    <!-- Additional rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Second grid (totals and telephone) -->
+    <div class="totals-grid">
+        <div class="telephone-input">
+            <label>Telefone: <input type="text" name="telefone" placeholder="Digite o telefone"></label>
+        </div>
+        <div class="totals-info">
+            <label>Subtotal: <span>R$ 100,00</span></label>
+            <label>Valor Entrega: <span>R$ 10,00</span></label>
+            <label>Desconto: <span>R$ 5,00</span></label>
+            <label>Total: <span>R$ 105,00</span></label>
+        </div>
+    </div>
+</div>
+{% endblock %}

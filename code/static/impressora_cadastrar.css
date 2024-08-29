@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.form-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f7f3ed;
+    padding: 15px;
+    border: 1px solid #000;
+}
+
+.form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px; /* Adjusted gap to add padding between input containers */
+    width: 100%;
+}
+
+.form-fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-fields input {
+    padding: 5px;
+    width: 100%;
+}

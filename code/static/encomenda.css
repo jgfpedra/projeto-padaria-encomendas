@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    gap: 20px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.order-info, .client-info, .product-info {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+h3 {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.order-info label, .client-info label, .totals-info label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.product-info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-info th, .product-info td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.totals-grid {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.telephone-input label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.telephone-input input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.totals-info {
+    display: grid;
+    gap: 10px;
+}
