@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px;
 }
 
 .button-container {
@@ -11,6 +10,11 @@ body {
 }
 
 .button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.button-container a{
     padding: 5px 15px;
     cursor: pointer;
 }

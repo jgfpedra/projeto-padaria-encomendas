@@ -48,7 +48,9 @@ produtosEncomenda{
   observacao
 }
 
-produtos --> bd da padaria --> public/produto
+produtos{
+
+}--> bd da padaria --> public/produto
 
 lojas{
   id;

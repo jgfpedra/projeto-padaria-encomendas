@@ -4,12 +4,16 @@
 
 {% block content %}
   <head>
-    <link rel="stylesheet" href="static/impressora_cadastrar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/impressora_cadastrar.css') }}">
   </head>
+  <script src="{{ url_for('static', filename='js/salvar_impressora_cadastrar.js') }}" defer></script>
 
   <!-- Top buttons for saving or canceling the operation -->
   <div class="button-container">
-      <button>Salvar</button>
+      <div class="popup-container-salvar">
+        <button onclick="showPopup()">Salvar</button>
+      </div>
+      <div id="popup-container-salvar"></div>
       <button>Cancelar</button>
   </div>
 
@@ -30,7 +34,9 @@
 
   <!-- Bottom buttons for saving or exiting -->
   <div class="button-container">
-      <button>Salvar</button>
+      <div class="popup-container-salvar">
+        <button onclick="showPopup()">Salvar</button>
+      </div>
       <button>Sair</button>
   </div>
 {% endblock %}

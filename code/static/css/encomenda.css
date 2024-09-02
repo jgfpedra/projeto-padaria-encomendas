@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px;
 }
 
 .button-container {
@@ -82,4 +81,28 @@ h3 {
 .totals-info {
     display: grid;
     gap: 10px;
+}
+
+/* Style for the button grid (Salvar and Sair) */
+.button-grid {
+    grid-column: span 2; /* This makes the button-grid span across both columns of the main grid */
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+.button-grid button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button-grid button:hover {
+    background-color: #0056b3;
 }

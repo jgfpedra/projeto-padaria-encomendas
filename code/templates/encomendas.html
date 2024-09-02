@@ -4,17 +4,25 @@
 
 {% block content %}
 <head>
-  <link rel="stylesheet" href="static/encomenda.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/encomenda.css') }}">
+  <script src="{{ url_for('static', filename='js/lancamento_historico_encomendas.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/lancamento_finalizar_encomendas.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/lancamento_salvar_encomendas.js') }}" defer></script>
 </head>
 <!-- First division with buttons -->
 <div class="button-container">
+
     <button>Pesquisar</button>
     <button>Imprimir</button>
     <button>Deletar</button>
+
     <button>Estornar</button>
     <button>Finalizar</button>
     <button>Relatório</button>
-    <button>Histórico</button>
+    <div class="popup-container-historico">
+      <button onclick="showPopupHistorico()">Historico</button>
+    </div>
+    <div id="popup-container-historico"></div>
 </div>
 
 <!-- Second division with grids -->
@@ -90,6 +98,14 @@
             <label>Desconto: <span>R$ 5,00</span></label>
             <label>Total: <span>R$ 105,00</span></label>
         </div>
+    </div>
+
+    <div class="button-grid">
+        <div class="popup-container-salvar">
+          <button onclick="showPopup()">Salvar</button>
+        </div>
+        <div id="popup-container-salvar"></div>
+        <button onclick="exitOrder()">Sair</button>
     </div>
 </div>
 {% endblock %}

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Flask App{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/impressora_configurar_popup.js') }}" defer></script>
 </head>
 <body>
     <header>
@@ -15,7 +16,7 @@
                 <li class="dropdown">
                   <a href="#" class="dropbtn">Cadastrar</a>
                   <div class="dropdown-content">
-                      <a href="{{ url_for('pesquisar_cliente') }}">Cliente</a>
+                      <a href="{{ url_for('pesquisar_cliente_bp.pesquisar_cliente') }}">Cliente</a>
                       <a href="{{ url_for('pesquisar_impressora') }}">Impressora</a>
                   </div>
                 </li>  
@@ -29,7 +30,10 @@
                 <li class="dropdown">
                   <a href="#" class="dropbtn">Configurar</a>
                   <div class="dropdown-content">
-                      <a href="{{ url_for('impressora_configuracao') }}">Impressora</a>
+                      <div class="popup-container-impressora">
+                        <a onclick="showPopupConfigurar()">Impressora</a>
+                      </div>
+                      <div id="popup-container-impressora"></div>
                   </div>
                 </li>  
             </ul>

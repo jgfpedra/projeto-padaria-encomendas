@@ -1,13 +1,13 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px;
 }
 
 .button-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .button-container button {
@@ -60,4 +60,8 @@ body {
 .phone-container .button-container {
     display: flex;
     gap: 10px;
+}
+
+.phone-row {
+    margin-bottom: 10px;
 }

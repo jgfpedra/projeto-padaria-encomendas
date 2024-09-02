@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px;
 }
 
 .button-container {
@@ -31,6 +30,15 @@ body {
 .input-container input {
     padding: 5px;
     width: 100%;
+}
+
+.total-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #000;
 }
 
 .results-table {

@@ -3,41 +3,61 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<head>
-  <link rel="stylesheet" href="static/pesquisar_cliente.css">
-</head>
+    <head>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_cliente.css') }}">
+      <script src="{{ url_for('static', filename='js/pesquisar_cliente.js') }}" defer></script>
+    </head>
+
     <div class="button-container">
-        <button>Pesquisar</button>
-        <button><a href="{{ url_for('cliente_cadastrar') }}">Incluir</a></button>
-        <button>Deletar</button>
-        <button>Editar</button>
+      <button onclick="window.location.href='{{ url_for('cliente_cadastrar') }}'">Incluir</button>
+      <button type="button" onclick="confirmDelete()">Deletar</button>
+      <button type="button" onclick="redirectToEdit()">Editar</button>
+    </div> 
+    <div class="button-container">
+      <form method="POST" action="{{ url_for('pesquisar_cliente_bp.pesquisar_cliente') }}">
+          <label>Codigo <input type="text" name="codigo"></label>
+          <label>Nome <input type="text" name="nome"></label>
+          <label>Telefone <input type="text" name="telefone"></label>
+          <label>Municipio <input type="text" name="municipio"></label>
+          <label>Endereco <input type="text" name="endereco"></label>
+          <label>Situacao <input type="text" name="situacao"></label>
+          <button type="submit">Pesquisar</button>
+      </form>
     </div>
-
-    <div class="input-container">
-        <label>Codigo <input type="text" name="codigo"></label>
-        <label>Nome <input type="text" name="nome"></label>
-        <label>Telefone <input type="text" name="telefone"></label>
-        <label>Municipio <input type="text" name="municipio"></label>
-        <label>Endereco <input type="text" name="endereco"></label>
-        <label>Situacao <input type="text" name="situacao"></label>
-    </div>
-
     <table class="results-table">
         <thead>
             <tr>
+                <th>Select</th>
                 <th>Codigo</th>
                 <th>Nome</th>
-                <th>Telefone</th>
-                <th>Municipio</th>
                 <th>Endereco</th>
-                <th>Situacao</th>
+                <th>Numero</th>
+                <th>Bairro</th>
+                <th>Complemento</th>
+                <th>Municipio</th>
+                <th>Observacao</th>
+                <th>Telefones</th>
             </tr>
         </thead>
         <tbody>
-            <!-- This is where the data from the database will be populated -->
-            <tr>
-                <td colspan="6">Campos preenchidos pelo banco de dados</td>
-            </tr>
+            {% for cliente in clientes %}
+                <tr>
+                    <td><input type="radio" name="selected-client" value="{{ cliente[0] }}" class="client-radio"></td>
+                    <td>{{ cliente[0] }}</td>
+                    <td>{{ cliente[1] }}</td>
+                    <td>{{ cliente[2] }}</td>
+                    <td>{{ cliente[3] }}</td>
+                    <td>{{ cliente[4] }}</td>
+                    <td>{{ cliente[5] }}</td>
+                    <td>{{ cliente[6] }}</td>
+                    <td>{{ cliente[7] }}</td>
+                    <td>{{ cliente[8] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="10">Nenhum cliente encontrado.</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

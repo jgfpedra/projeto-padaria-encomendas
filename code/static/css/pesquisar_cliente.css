@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px;
 }
 
 .button-container {
@@ -16,8 +15,8 @@ body {
 }
 
 .input-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 10px;
     padding: 10px;
@@ -25,12 +24,15 @@ body {
 }
 
 .input-container label {
-    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    white-space: nowrap;
 }
 
 .input-container input {
     padding: 5px;
-    width: 100%;
+    width: 200px; /* Adjust width as needed */
 }
 
 .results-table {
