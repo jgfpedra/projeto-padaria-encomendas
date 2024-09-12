@@ -31,14 +31,20 @@ body {
 }
 
 .input-container input {
+    margin-left: 5%;
     padding: 5px;
     width: 200px; /* Adjust width as needed */
+}
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .results-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
 }
 
 .results-table, .results-table th, .results-table td {

@@ -1,37 +1,41 @@
+
 function getSelectedClientId() {
-  const selectedRadio = document.querySelector('input[name="selected-client"]:checked');
-  return selectedRadio ? selectedRadio.value : null;
+    const selectedClient = document.querySelector('input[name="selected-client"]:checked');
+    return selectedClient ? selectedClient.value : null;
 }
 
 function redirectToEdit() {
-  const clientId = getSelectedClientId();
-  if (clientId) {
-    console.log(`Redirecting to edit page with client ID: ${clientId}`);
-    window.location.href = `${}${clientId}`;
-  } else {
-    alert('Nenhum cliente selecionado para editar.');
-  }
+    const clientId = getSelectedClientId();
+    if (clientId) {
+        // Construct the URL with the client ID
+        window.location.href = `cliente_cadastrar/${clientId}`;
+    } else {
+        alert('Nenhum cliente selecionado para editar.');
+    }
 }
 
 function confirmDelete() {
-  const clientId = getSelectedClientId();
+  console.log('confirmDelete function called');
+  const clientId = getSelectedClientId();  // Ensure this function returns a valid client ID
+
   if (clientId) {
     const confirmDelete = confirm('Tem certeza que deseja deletar este cliente?');
     if (confirmDelete) {
       console.log(`Submitting delete request for client ID: ${clientId}`);
-      // Create a new form to submit the delete request
-      const deleteForm = document.createElement('form');
-      deleteForm.method = 'POST';
-      deleteForm.action = deleteUrl;
 
-      const idInput = document.createElement('input');
-      idInput.type = 'hidden';
-      idInput.name = 'id';
-      idInput.value = clientId;
-      deleteForm.appendChild(idInput);
-
-      document.body.appendChild(deleteForm);
-      deleteForm.submit();
+      const formData = new FormData();
+      formData.append('id', clientId);
+      
+      fetch('/delete_cliente', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();  // Reloads the page to reflect changes
+        }
+      })
+      .catch(error => console.error('Error during fetch:', error));
     }
   } else {
     alert('Nenhum cliente selecionado para deletar.');

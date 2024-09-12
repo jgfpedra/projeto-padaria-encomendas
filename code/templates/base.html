@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/impressora_configurar_popup.js') }}" defer></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
     <header>
@@ -17,14 +18,14 @@
                   <a href="#" class="dropbtn">Cadastrar</a>
                   <div class="dropdown-content">
                       <a href="{{ url_for('pesquisar_cliente_bp.pesquisar_cliente') }}">Cliente</a>
-                      <a href="{{ url_for('pesquisar_impressora') }}">Impressora</a>
+                      <a href="{{ url_for('pesquisar_impressora_bp.pesquisar_impressora') }}">Impressora</a>
                   </div>
                 </li>  
                 <li class="dropdown">
                   <a href="#" class="dropbtn">Encomendas</a>
                   <div class="dropdown-content">
-                      <a href="{{ url_for('encomendas') }}">Lancamento</a>
-                      <a href="{{ url_for('pesquisar_encomendas') }}">Pesquisar</a>
+                      <a href="{{ url_for('encomenda_bp.encomenda') }}">Lancamento</a>
+                      <a href="{{ url_for('encomenda_bp.encomenda') }}">Pesquisar</a>
                   </div>
                 </li>  
                 <li class="dropdown">

@@ -5,37 +5,62 @@
 {% block content %}
 <head>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_impressora.css') }}">
+  <script src="{{ url_for('static', filename='js/pesquisar_impressora.js') }}"></script>
 </head>
     <div class="button-container">
-        <button>Pesquisar</button>
-        <button><a href="{{ url_for('impressora_cadastrar') }}">Incluir</a></button>
-        <button>Deletar</button>
-        <button>Editar</button>
+      <button onclick="window.location.href='{{ url_for('impressora_cadastrar_bp.impressora_cadastrar') }}'">Incluir</button>
+      <button type="submit" onclick="confirmDelete()">Deletar</button>
+      <button type="submit" onclick="redirectToEdit()">Editar</button>
     </div>
 
-    <div class="input-container">
-        <label>Codigo <input type="text" name="codigo"></label>
+    <div class="button-container">
+      <form method="POST" action="{{ url_for('pesquisar_impressora_bp.pesquisar_impressora') }}">
+        <label>ID <input type="text" name="id"></label>
         <label>Descricao <input type="text" name="descricao"></label>
-        <label>Endereco (IP) <input type="text" name="endereco"></label>
-        <label>Situacao <input type="text" name="situacao"></label>
-        <label>Loja <input type="text" name="loja"></label>
+        <label>Endereco (IP)<input type="text" name="endereco"></label>
+        <label>Tipo Impressora<input type="text" name="situacao"></label>
+        <label>Modelo Impressora<input type="text" name="loja"></label>
+        <label>Porta<input type="text" name="loja"></label>
+        <label>Configuracao <input type="text" name="loja"></label>
+        <label>Utiliza Guilhotina <input type="text" name="loja"></label>
+        <button type="submit">Pesquisar</button>
+      </form>
     </div>
 
     <table class="results-table">
         <thead>
             <tr>
+                <th>Select</th>
                 <th>Codigo</th>
-                <th>Descricao</th>
-                <th>Endereco</th>
-                <th>Situacao</th>
                 <th>Loja</th>
+                <th>Descricao</th>
+                <th>Endereco (IP)</th>
+                <th>Tipo Impressao</th>
+                <th>Modelo Impressora</th>
+                <th>Porta</th>
+                <th>Configuracao</th>
+                <th>Utiliza Guilhotina</th>
             </tr>
         </thead>
         <tbody>
-            <!-- This is where the data from the database will be populated -->
-            <tr>
-                <td colspan="6">Campos preenchidos pelo banco de dados</td>
-            </tr>
+            {% for impressora in impressoras %}
+                <tr>
+                    <td><input type="radio" name="selected-impressora" value="{{ impressora[0] }}" class="impressora-radio"></td>
+                    <td>{{ impressora[0] }}</td>
+                    <td>{{ impressora[1] }}</td>
+                    <td>{{ impressora[2] }}</td>
+                    <td>{{ impressora[3] }}</td>
+                    <td>{{ impressora[4] }}</td>
+                    <td>{{ impressora[5] }}</td>
+                    <td>{{ impressora[6] }}</td>
+                    <td>{{ impressora[7] }}</td>
+                    <td>{{ impressora[8] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">Nenhuma impressora encontrado.</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endblock %}

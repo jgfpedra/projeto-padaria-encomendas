@@ -14,10 +14,13 @@ body {
     cursor: pointer;
 }
 
+/* Style for the main grid container */
 .main-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
+    background-color: #f9f9f9; /* Light gray background for the whole grid */
+    padding: 20px; /* Add some padding around the grid */
 }
 
 .info-grid {
@@ -29,7 +32,7 @@ body {
     border: 1px solid #ddd;
 }
 
-.order-info, .client-info, .product-info {
+.order-info, .product-info {
     padding: 10px;
     border: 1px solid #ccc;
     background-color: #fff;
@@ -41,7 +44,7 @@ h3 {
     margin-bottom: 10px;
 }
 
-.order-info label, .client-info label, .totals-info label {
+.order-info label, .totals-info label {
     display: block;
     margin-bottom: 5px;
 }
@@ -66,16 +69,55 @@ h3 {
     background-color: #f9f9f9;
 }
 
+/* Reduce bottom margin of <h2> */
+h2 {
+    margin-top: 0; /* No margin at the top */
+    margin-bottom: 10px; /* Adjust this value as needed */
+}
+
+/* Adjust the spacing around the form container */
+.telephone-input {
+    margin-bottom: 10px; /* Space between input fields if needed */
+}
+
+/* Ensure forms are not affected by excessive padding */
+.telephone-input form {
+    margin: 0; /* Remove default margin if any */
+    padding: 0; /* Remove default padding if any */
+}
+
 .telephone-input label {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .telephone-input input {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-bottom: 10px; /* Corrected missing colon */
+}
+
+/* Style for table rows with hover effect */
+.product-info tr.selectable-row {
+    cursor: pointer; /* Indicates that the row is clickable */
+}
+
+/* Hover effect for rows */
+.product-info tr.selectable-row:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+}
+
+/* Hide radio buttons visually but still accessible */
+.item-radio {
+    position: absolute; /* Off-screen */
+    opacity: 0;
+}
+
+/* Ensure the row is visually highlighted when selected */
+.product-info tr.selectable-row.selected {
+    background-color: #e0e0e0; /* Highlight background for selected row */
 }
 
 .totals-info {
@@ -105,4 +147,17 @@ h3 {
 
 .button-grid button:hover {
     background-color: #0056b3;
+}
+
+.client-info, .order-info {
+    position: relative; /* Needed for the absolute positioning of the toggle button */
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 200px; /* Adjust as needed for initial height */
+    overflow: hidden; /* Hides content that overflows */
+    transition: max-height 0.3s ease;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between labels */
 }

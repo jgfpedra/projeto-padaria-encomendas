@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Encomenda</title>
+</head>
+<body>
+    <h1>Encomenda</h1>
+
+    <!-- Form to create a new encomenda -->
+    <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
+        <label for="cellphone">Cellphone:</label>
+        <input type="text" id="cellphone" name="cellphone" required>
+        <!-- Add other fields as needed -->
+        <input type="submit" value="Create Encomenda">
+    </form>
+
+    {% if encomenda %}
+        <h2>Encomenda Details</h2>
+        <p>ID: {{ encomenda[0] }}</p>
+        <p>Data Hora Criacao: {{ encomenda[1] }}</p>
+        <p>Situacao: {{ encomenda[2] }}</p>
+        <p>Data Encomenda: {{ encomenda[3] }}</p>
+        <p>Hora Encomenda: {{ encomenda[4] }}</p>
+        <p>Tipo: {{ encomenda[5] }}</p>
+        <p>Loja: {{ encomenda[6] }}</p>
+        <p>Cliente ID: {{ encomenda[7] }}</p>
+        
+        <h2>Add Products to Encomenda</h2>
+        <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+            <label for="product_id">Product ID:</label>
+            <input type="number" id="product_id" name="product_id" required>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+            <input type="submit" value="Add Product">
+        </form>
+
+        <h2>Items in Encomenda</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens %}
+                    <tr>
+                        <td>{{ item[2] }}</td>
+                        <td>{{ item[3] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>
+

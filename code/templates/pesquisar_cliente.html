@@ -5,17 +5,18 @@
 {% block content %}
     <head>
       <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_cliente.css') }}">
-      <script src="{{ url_for('static', filename='js/pesquisar_cliente.js') }}" defer></script>
+      <script src="{{ url_for('static', filename='js/pesquisar_cliente.js') }}"></script>
     </head>
 
     <div class="button-container">
-      <button onclick="window.location.href='{{ url_for('cliente_cadastrar') }}'">Incluir</button>
-      <button type="button" onclick="confirmDelete()">Deletar</button>
-      <button type="button" onclick="redirectToEdit()">Editar</button>
-    </div> 
+      <button onclick="window.location.href='{{ url_for('cliente_cadastrar_bp.cliente_cadastrar') }}'">Incluir</button>
+      <button type="submit" onclick="confirmDelete()">Deletar</button>
+      <button type="submit" onclick="redirectToEdit()">Editar</button>
+    </div>
+
     <div class="button-container">
       <form method="POST" action="{{ url_for('pesquisar_cliente_bp.pesquisar_cliente') }}">
-          <label>Codigo <input type="text" name="codigo"></label>
+          <label>Codigo <input type="text" name="id"></label>
           <label>Nome <input type="text" name="nome"></label>
           <label>Telefone <input type="text" name="telefone"></label>
           <label>Municipio <input type="text" name="municipio"></label>
@@ -24,40 +25,45 @@
           <button type="submit">Pesquisar</button>
       </form>
     </div>
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Codigo</th>
-                <th>Nome</th>
-                <th>Endereco</th>
-                <th>Numero</th>
-                <th>Bairro</th>
-                <th>Complemento</th>
-                <th>Municipio</th>
-                <th>Observacao</th>
-                <th>Telefones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cliente in clientes %}
-                <tr>
-                    <td><input type="radio" name="selected-client" value="{{ cliente[0] }}" class="client-radio"></td>
-                    <td>{{ cliente[0] }}</td>
-                    <td>{{ cliente[1] }}</td>
-                    <td>{{ cliente[2] }}</td>
-                    <td>{{ cliente[3] }}</td>
-                    <td>{{ cliente[4] }}</td>
-                    <td>{{ cliente[5] }}</td>
-                    <td>{{ cliente[6] }}</td>
-                    <td>{{ cliente[7] }}</td>
-                    <td>{{ cliente[8] }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="10">Nenhum cliente encontrado.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <div class="table-container">
+      <table class="results-table">
+          <thead>
+              <tr>
+                  <th>Select</th>
+                  <th>Codigo</th>
+                  <th>Nome</th>
+                  <th>Endereco</th>
+                  <th>Numero</th>
+                  <th>Bairro</th>
+                  <th>Complemento</th>
+                  <th>Municipio</th>
+                  <th>Observacao</th>
+                  <th>Telefones</th>
+                  <th>Situacao</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for cliente in clientes %}
+                  <tr>
+                      <td><input type="radio" name="selected-client" value="{{ cliente[0] }}" class="client-radio"></td>
+                      <td>{{ cliente[0] }}</td>
+                      <td>{{ cliente[1] }}</td>
+                      <td>{{ cliente[2] }}</td>
+                      <td>{{ cliente[3] }}</td>
+                      <td>{{ cliente[4] }}</td>
+                      <td>{{ cliente[5] }}</td>
+                      <td>{{ cliente[6] }}</td>
+                      <td>{{ cliente[7] }}</td>
+                      <td>{{ cliente[8] }}</td>
+                      <td>{{ cliente[9] }}</td>
+                  </tr>
+              {% else %}
+                  <tr>
+                      <td colspan="11">Nenhum cliente encontrado.</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
 {% endblock %}

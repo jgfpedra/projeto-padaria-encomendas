@@ -3,8 +3,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 import sys
 import os
 import importlib.util
+from config import Config 
+from flask_cors import CORS
 
 app = Flask(__name__)
+app.config.from_object(Config)
+CORS(app)
 
 # Define the directory containing your Python modules
 module_dir = os.path.join(os.path.dirname(__file__), 'static/py')
@@ -32,15 +36,23 @@ def import_all_modules(directory):
 modules = import_all_modules(module_dir)
 
 # Assuming cliente is one of the imported modules
-cliente_cc = modules['cadastrar_cliente']
+cliente_cadastrar_bp = modules['cliente_cadastrar']
 login_bp = modules['login']
 pesquisar_cliente_bp = modules['pesquisar_cliente']
+impressora_cadastrar_bp = modules['impressora_cadastrar']
+pesquisar_impressora_bp = modules['pesquisar_impressora']
+encomenda_bp = modules['encomenda']
 
 app.register_blueprint(login_bp.login_bp)
 app.register_blueprint(pesquisar_cliente_bp.pesquisar_cliente_bp)
+app.register_blueprint(cliente_cadastrar_bp.cliente_cadastrar_bp)
+app.register_blueprint(impressora_cadastrar_bp.impressora_cadastrar_bp)
+app.register_blueprint(pesquisar_impressora_bp.pesquisar_impressora_bp)
+app.register_blueprint(encomenda_bp.encomenda_bp)
 
-# Create the table if it doesn't exist
-cliente_cc.create_table()
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.root_path + '/static', 'favicon.ico')
 
 @app.route('/')
 def index():
@@ -49,77 +61,6 @@ def index():
 @app.route('/login_page')
 def login_page():
     return render_template('login.html')
-
-@app.route('/cliente_cadastrar', methods=['GET', 'POST'])
-@app.route('/cliente_cadastrar/<int:id>', methods=['GET', 'POST'])
-def cliente_cadastrar(id=None):
-    if request.method == 'POST':
-        id = request.form.get('id', '')
-        nome = request.form.get('nome', '')
-        endereco = request.form.get('endereco', '')
-        numero = request.form.get('numero', '')
-        bairro = request.form.get('bairro', '')
-        complemento = request.form.get('complemento', '')
-        municipio = request.form.get('municipio', '')
-        observacao = request.form.get('observacao', '')
-        telefones = ','.join(request.form.getlist('telefones'))
-
-        if id:  # If id is provided, update the existing record
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('''
-                UPDATE cliente
-                SET nome = %s, endereco = %s, numero = %s, bairro = %s, complemento = %s, municipio = %s, observacao = %s, telefones = %s
-                WHERE id = %s
-            ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, id))
-            conn.commit()
-            cur.close()
-            conn.close()
-        else:  # If no id is provided, create a new record
-            insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones)
-        return redirect(url_for('clientes'))
-
-    # GET request: show the form
-    id = request.args.get('id')
-    if id:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM cliente WHERE id = %s', (id,))
-        cliente = cur.fetchone()
-        cur.close()
-        conn.close()
-        cliente = {
-            'id': cliente[0],
-            'nome': cliente[1],
-            'endereco': cliente[2],
-            'numero': cliente[3],
-            'bairro': cliente[4],
-            'complemento': cliente[5],
-            'municipio': cliente[6],
-            'observacao': cliente[7],
-            'telefones': cliente[8]
-        }
-    else:
-        cliente = None
-
-    next_codigo = cliente_cc.get_next_codigo()
-    return render_template('cliente_cadastrar.html', cliente=cliente, next_codigo=next_codigo)
-
-@app.route('/pesquisar_impressrora')
-def pesquisar_impressora():
-    return render_template('pesquisar_impressora.html')
-
-@app.route('/impressora_cadastrar')
-def impressora_cadastrar():
-    return render_template('impressora_cadastrar.html')
-
-@app.route('/encomendas')
-def encomendas():
-    return render_template('encomendas.html')
-
-@app.route('/pesquisar_encomendas')
-def pesquisar_encomendas():
-    return render_template('pesquisar_encomendas.html')
 
 @app.route('/impressora_configuracao')
 def impressora_configuracao():

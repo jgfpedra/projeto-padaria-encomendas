@@ -21,26 +21,37 @@ body {
 
 .form-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Ensure form container stacks its children vertically */
     background-color: #f7f3ed;
     padding: 15px;
     border: 1px solid #000;
+    max-width: 1200px; /* Optional: to limit the width of the form */
+    margin: 20px auto; /* Center container and add margin */
+    border-radius: 8px;
 }
 
 .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px; /* Adjusted gap to add padding between input containers */
-    width: 100%;
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap if necessary */
+    gap: 20px; /* Space between form fields */
+    margin-bottom: 20px;
+}
+
+.form-fields > div {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+    gap: 5px;
+    flex: 1; /* Allow fields to take up available space */
 }
 
 .form-fields label {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    margin: 0; /* Remove default margin */
 }
 
 .form-fields input {
-    padding: 5px;
-    width: 100%;
+    padding: 8px;
+    width: 100%; /* Ensure inputs take full width of their container */
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }

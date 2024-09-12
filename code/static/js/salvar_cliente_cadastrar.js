@@ -12,12 +12,14 @@ function loadPopupSalvar() {
     .catch(error => console.error('Error loading pop-up:', error));
 }
 
-function showPopupSalvar() {
-        loadPopupSalvar();
-}
-
-function closePopupSalvar() {
-	document.getElementById('popup-container-salvar-display').style.display = 'none';
+function fetchDataAndClosePopup() {
+    fetch('/pesquisar_cliente').then(response => {
+        if (response.ok) {
+          document.getElementById('popup-container-salvar-display').style.display = 'none';
+        } else {
+            throw new Error('Network response was not ok.');
+        }
+    });
 }
 
 function submitFormSalvar() {
@@ -39,9 +41,4 @@ function submitFormSalvar() {
 		closePopupSalvar();
 		document.getElementById('meuForm').submit();
 	});
-}
-
-function cancelForm() {
-	document.querySelector('input[name="form_action"]').value = 'cancel'; // Set the hidden field value
-	document.getElementById('meuForm').submit(); // Submit the form to handle cancellation
 }

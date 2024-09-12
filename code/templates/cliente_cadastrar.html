@@ -10,45 +10,76 @@
   </head>
   
     <!-- Ensure the form has an action and method -->
-    <form action="/cliente_cadastrar" method="POST" id="meuForm">
-            <!-- Top buttons for saving or canceling the operation -->
-	    <input type="hidden" name="form_action" value="submit"> <!-- Hidden field -->
-            <div class="button-container">
-                <input type="submit" value="Salvar">
-	    	<button type="button" onclick="showPopupSalvar()">Sair</button>
-                <div id="popup-container-salvar"></div>
-            </div>
+  <form action="/cliente_cadastrar" method="POST" id="meuForm">
+    <input type="hidden" name="form_action" value="submit"> <!-- Hidden field -->
+    <div class="button-container">
+        <input type="submit" value="Salvar">
+        <button type="button" onclick="loadPopupSalvar()">Sair</button>
+        <div id="popup-container-salvar"></div>
+    </div>
 
-            <!-- Client registration form section -->
-            <div class="form-container">
-                <div class="form-fields">
-                    <label>ID <input type="text" name="id" value="{{ next_codigo }}" readonly></label>
-		    <label>Nome <input type="text" name="nome" required></label>
-                    <label>Endereco <input type="text" name="endereco" required></label>
-                    <label>Numero <input type="text" name="numero" required></label>
-                    <label>Bairro <input type="text" name="bairro" required></label>
-                    <label>Complemento <input type="text" name="complemento" required></label>
-                    <label>Municipio <input type="text" name="municipio" required></label>
-                    <label>Observacao <input type="text" name="observacao"></label>
-                </div>
+    <!-- Client registration form section -->
+    <div class="form-container">
+        <div class="form-fields">
+            <label>ID:
+              {% if cliente['id'] %}
+                <input type="text" name="id" value="{{ cliente['id'] }}" readonly>
+              {% else %}
+                <input type="text" name="id" value="{{ next_codigo }}" readonly>
+              {% endif %}
+            </label>
+            <label>Nome:
+                <input type="text" name="nome" value="{{ cliente['nome'] }}" required>
+            </label>
+            <label>Endereco:
+                <input type="text" name="endereco" value="{{ cliente['endereco'] }}" required>
+            </label>
+            <label>Numero:
+                <input type="text" name="numero" value="{{ cliente['numero'] }}" required>
+            </label>
+            <label>Bairro:
+                <input type="text" name="bairro" value="{{ cliente['bairro'] }}" required>
+            </label>
+            <label>Complemento:
+                <input type="text" name="complemento" value="{{ cliente['complemento'] }}" required>
+            </label>
+            <label>Municipio:
+                <input type="text" name="municipio" value="{{ cliente['municipio'] }}" required>
+            </label>
+            <label>Observacao:
+                <input type="text" name="observacao" value="{{ cliente['observacao'] }}">
+            </label>
+        </div>
 
-                <!-- Section for adding phone numbers -->
-		<div class="phone-container">
-                    <label>Telefones</label>
-                    <div id="phone-container">
-                        <!-- Phone input fields will be added here -->
+        <div id="phone-container">
+            {% if cliente['telefones'] %}
+                {% set phoneCounter = cliente['telefones']|length %}
+                {% for telefone in cliente['telefones'] %}
+                    <div class="phone-row">
+                        <label for="phone-{{ loop.index }}" required>Telefone {{ loop.index }}:</label>
+                        <input type="text" name="telefones" id="phone-{{ loop.index }}" value="{{ telefone }}" placeholder="Digite o telefone" required>
                     </div>
-                    <div class="button-container">
-                        <button type="button" onclick="addPhoneInput()">Incluir</button>
-                        <button type="button" onclick="removePhoneInput()">Remover</button>
-                    </div>
+                {% endfor %}
+            {% else %}
+                {% set phoneCounter = 1 %}
+                <div class="phone-row">
+                    <label for="phone-1" required>Telefone 1:</label>
+                    <input type="text" name="telefones" id="phone-1" placeholder="Digite o telefone" required>
                 </div>
-            </div>
+            {% endif %}
+        </div>
+        <script>
+          let phoneCounter = {{ phoneCounter }};
+        </script>
 
-            <!-- Bottom buttons for saving or exiting -->
-            <div class="button-container">
-	      <input type="submit" value="Salvar"></input>
-	      <button type="button" onclick="showPopupSalvar()">Sair</button>
-            </div>
-    </form>
+        <div class="button-container">
+            <button type="button" onclick="addPhoneInput()">Incluir</button>
+            <button type="button" onclick="removePhoneInput()">Remover</button>
+        </div>
+    </div>
+    <div class="button-container">
+      <input type="submit" value="Salvar"></input>
+      <button type="button" onclick="loadPopupSalvar()">Sair</button>
+    </div>
+  </form>
 {% endblock %}
