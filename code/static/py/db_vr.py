@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # static/py/db.py
 import psycopg2
 
@@ -13,4 +14,6 @@ def get_db_vr():
     """Establish a connection to the database."""
     conn = psycopg2.connect(**DB_CONFIG)
     return conn
+=======
+>>>>>>> refs/remotes/origin/main
 
