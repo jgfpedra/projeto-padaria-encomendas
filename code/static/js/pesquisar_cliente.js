@@ -15,14 +15,11 @@ function redirectToEdit() {
 }
 
 function confirmDelete() {
-  console.log('confirmDelete function called');
   const clientId = getSelectedClientId();  // Ensure this function returns a valid client ID
 
   if (clientId) {
     const confirmDelete = confirm('Tem certeza que deseja deletar este cliente?');
     if (confirmDelete) {
-      console.log(`Submitting delete request for client ID: ${clientId}`);
-
       const formData = new FormData();
       formData.append('id', clientId);
       

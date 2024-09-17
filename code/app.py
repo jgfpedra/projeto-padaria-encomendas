@@ -78,8 +78,8 @@ def show_popup_impressora():
 
 @app.route('/lancamento_finalizar_encomendas')
 def show_popup_lancamento_finalizar_encomendas():
-    popup_html = render_template('pop-ups/lancamento_finalizar_encomendas.html')
-    return jsonify({'popup_html': popup_html})
+    popup_html_finalizar = render_template('pop-ups/lancamento_finalizar_encomendas.html')
+    return jsonify({'popup_html_finalizar': popup_html_finalizar})
 
 @app.route('/lancamento_historico_encomendas')
 def show_popup_lancamento_historico_encomendas():

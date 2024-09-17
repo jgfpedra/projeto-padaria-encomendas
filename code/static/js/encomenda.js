@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const rows = document.querySelectorAll('tr.selectable-row');
+    const finalizarButton = document.getElementById('finalizar-button');
 
     rows.forEach(row => {
         row.addEventListener('click', function() {

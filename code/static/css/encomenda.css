@@ -99,6 +99,31 @@ h2 {
     margin-bottom: 10px; /* Corrected missing colon */
 }
 
+/* Adjust the spacing around the form container */
+.ending-input {
+    margin-bottom: 10px; /* Space between input fields if needed */
+}
+
+/* Ensure forms are not affected by excessive padding */
+.ending-input form {
+    margin: 0; /* Remove default margin if any */
+    padding: 0; /* Remove default padding if any */
+}
+
+.ending-input label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+.ending-input input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px; /* Corrected missing colon */
+}
+
+
 /* Style for table rows with hover effect */
 .product-info tr.selectable-row {
     cursor: pointer; /* Indicates that the row is clickable */

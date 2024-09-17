@@ -163,3 +163,4 @@ cython_debug/
 
 code/static/py/db.py
 code/static/py/db_vr.py
+code/config.py

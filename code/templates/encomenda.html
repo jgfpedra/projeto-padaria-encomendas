@@ -5,8 +5,8 @@
 {% block content %}
 <head>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/encomenda.css') }}">
-  <!--<script src="{{ url_for('static', filename='js/lancamento_historico_encomendas.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/lancamento_finalizar_encomendas.js') }}" defer></script>
+  <!--<script src="{{ url_for('static', filename='js/lancamento_historico_encomendas.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/lancamento_salvar_encomendas.js') }}" defer></script>-->
   <script src="{{ url_for('static', filename='js/encomenda.js') }}" defer></script>
 </head>
@@ -16,12 +16,14 @@
         <button>Imprimir</button>
         <button>Deletar</button>
         <button>Estornar</button>
-        <button>Finalizar</button>
+        <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+            <button type="submit" name="finalizar" value="true" class="btn btn-primary">Finalizar</button>
+        </form>
         <button>Relatório</button>
         <button>Historico</button>
         <button>Observacao</button>
     </div>
-  
+    <div id="popup-content-lancamento-finalizar"></div>
     <div class="main-grid">
         <!-- First grid (3 sections) -->
         <div class="info-grid">
@@ -99,7 +101,7 @@
             </div>
           {% endif %}
 
-          {% if encomenda %}
+          {% if (encomenda and not finalizar) %}
             <!-- Form to add products to an existing encomenda -->
             <div class="telephone-input">
               <h2>Add Products to Encomenda</h2>
@@ -111,11 +113,29 @@
                 </form>
               {% else %}
                 <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+                  {% if tipoembalagem == 'KG' %}
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" step="0.001" required>
+                  {% elif tipoembalagem == 'UN' %}
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" required>
-                    <input type="submit" value="Add Quantity">
+                  {% endif %}
+                  <input type="submit" value="Add Quantity">
                 </form>
               {% endif %}
+            </div>
+          {% endif %}
+
+          {% if finalizar %}
+            <div class="ending-input" id="ending-input-form">
+              <h2>Finalizar encomenda</h2>
+              <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+                <label for="valor_entrega">Valor entrega:</label>
+                <input type="number" id="valor_entrega" step="0.01" name="valor_entrega" value="{{ valor_entrega }}" required>
+                <label for="desconto">Desconto:</label>
+                <input type="number" id="desconto" step="0.01" name="desconto" value="{{ desconto }}" required>
+                <input type="submit" name="finalizar" value="Finalize">
+              </form>
             </div>
           {% endif %}
 
@@ -128,10 +148,10 @@
         </div>
 
         <div class="button-grid">
-            <div class="popup-container-salvar">
+            <div class="popup-content-lancamento-salvar">
                 <button onclick="showPopup()">Salvar</button>
             </div>
-            <div id="popup-container-salvar"></div>
+            <div id="popup-content-lancamento-sair"></div>
             <button onclick="exitOrder()">Sair</button>
         </div>
     </div>

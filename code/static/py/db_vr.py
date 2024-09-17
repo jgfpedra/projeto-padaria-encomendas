@@ -6,7 +6,7 @@ DB_CONFIG = {
     'dbname': 'vr_bkp',
     'user': 'postgres',
     'password': 'VrPost@Server',
-    'host': '192.168.1.237'
+    'host': '192.168.1.222'
 }
 
 def get_db_vr():
