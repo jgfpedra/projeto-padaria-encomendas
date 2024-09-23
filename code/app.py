@@ -3,12 +3,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 import sys
 import os
 import importlib.util
-from config import Config 
 from flask_cors import CORS
 
+def load_secret_key(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
+
 app = Flask(__name__)
-app.config.from_object(Config)
-CORS(app)
+app.secret_key = load_secret_key('static/py/config/secret_key.txt')
 
 # Define the directory containing your Python modules
 module_dir = os.path.join(os.path.dirname(__file__), 'static/py')
@@ -42,6 +44,7 @@ pesquisar_cliente_bp = modules['pesquisar_cliente']
 impressora_cadastrar_bp = modules['impressora_cadastrar']
 pesquisar_impressora_bp = modules['pesquisar_impressora']
 encomenda_bp = modules['encomenda']
+pesquisar_encomenda_bp = modules['pesquisar_encomenda']
 
 app.register_blueprint(login_bp.login_bp)
 app.register_blueprint(pesquisar_cliente_bp.pesquisar_cliente_bp)
@@ -49,6 +52,7 @@ app.register_blueprint(cliente_cadastrar_bp.cliente_cadastrar_bp)
 app.register_blueprint(impressora_cadastrar_bp.impressora_cadastrar_bp)
 app.register_blueprint(pesquisar_impressora_bp.pesquisar_impressora_bp)
 app.register_blueprint(encomenda_bp.encomenda_bp)
+app.register_blueprint(pesquisar_encomenda_bp.pesquisar_encomenda_bp)
 
 @app.route('/favicon.ico')
 def favicon():

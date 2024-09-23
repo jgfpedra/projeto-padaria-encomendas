@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
-from db import get_db_connection
+from static.py.config.db import get_db_connection
 
 pesquisar_cliente_bp = Blueprint('pesquisar_cliente_bp', __name__)
 
@@ -19,14 +19,17 @@ def pesquisar_cliente():
 
     # Build query with filters
     query = """
-        SELECT id, nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao
-        FROM cliente
-        WHERE (%s IS NULL OR id = %s)
-        AND (%s IS NULL OR nome ILIKE %s)
-        AND (%s IS NULL OR numero ILIKE %s)
-        AND (%s IS NULL OR municipio ILIKE %s)
-        AND (%s IS NULL OR endereco ILIKE %s)
-        AND (%s IS NULL OR situacao ILIKE %s);
+        SELECT c.id, c.nome, c.endereco, c.numero, c.bairro, c.complemento, c.municipio, c.observacao, c.situacao,
+               array_agg(t.telefone) AS telefones
+        FROM cliente c
+        LEFT JOIN telefone t ON c.id = t.cliente_id
+        WHERE (%s IS NULL OR c.id = %s)
+        AND (%s IS NULL OR c.nome ILIKE %s)
+        AND (%s IS NULL OR c.numero ILIKE %s)
+        AND (%s IS NULL OR c.municipio ILIKE %s)
+        AND (%s IS NULL OR c.endereco ILIKE %s)
+        AND (%s IS NULL OR c.situacao ILIKE %s)
+        GROUP BY c.id
     """
 
     # Define parameters for the query
@@ -52,7 +55,23 @@ def pesquisar_cliente():
     cur.close()
     conn.close()
 
-    return render_template('pesquisar_cliente.html', clientes=clientes_data)
+    # Prepare data for rendering, converting telefones to a list if needed
+    clientes = []
+    for cliente in clientes_data:
+        cliente_dict = {
+            'id': cliente[0],
+            'nome': cliente[1],
+            'endereco': cliente[2],
+            'numero': cliente[3],
+            'bairro': cliente[4],
+            'complemento': cliente[5],
+            'municipio': cliente[6],
+            'observacao': cliente[7],
+            'situacao': cliente[8],
+            'telefones': cliente[9] if cliente[9] else []  # Handle no telefones case
+        }
+        clientes.append(cliente_dict)
+    return render_template('pesquisar_cliente.html', clientes=clientes)
 
 @pesquisar_cliente_bp.route('/delete_cliente', methods=['POST', 'GET'])
 def delete_cliente():

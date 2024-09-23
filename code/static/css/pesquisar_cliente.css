@@ -17,7 +17,7 @@ body {
 .input-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 10px; /* Space between items */
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #000;
@@ -26,14 +26,16 @@ body {
 .input-container label {
     display: flex;
     align-items: center;
-    margin-right: 10px;
-    white-space: nowrap;
+    gap: 10px;
+    margin-right: 10px; /* Space between label and input */
+    flex: 1 1 150px; /* Allow flexibility and set a minimum width */
 }
 
 .input-container input {
-    margin-left: 5%;
     padding: 5px;
-    width: 200px; /* Adjust width as needed */
+    width: 100%; /* Make inputs responsive */
+    max-width: 200px; /* Optional max width */
+    gap: 10px;
 }
 
 .table-container {

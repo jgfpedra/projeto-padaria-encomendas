@@ -1,7 +1,7 @@
 # static/py/cliente.py
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
-from db import get_db_connection
+from static.py.config.db import get_db_connection
 import regex as re
 
 cliente_cadastrar_bp = Blueprint('cliente_cadastrar_bp', __name__)
@@ -34,13 +34,28 @@ def cliente_cadastrar(id=None):
             cur.execute('SELECT id FROM cliente WHERE id = %s', (id,))
             existing_client = cur.fetchone()
             if existing_client:
-                # Update the existing record
+                # Update the existing record in cliente
                 cur.execute('''
                     UPDATE cliente
-                    SET nome = %s, endereco = %s, numero = %s, bairro = %s, complemento = %s, municipio = %s, observacao = %s, telefones = %s, situacao = %s
+                    SET nome = %s, endereco = %s, numero = %s, bairro = %s, complemento = %s, municipio = %s, observacao = %s, situacao = %s
                     WHERE id = %s
-                ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao, id))
-                flash('Cliente atualizado com sucesso', 'success')
+                ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao, id))
+                
+                # Now update the telefones
+                telefones = request.form.getlist('telefones')
+                
+                # First, delete existing telefones for this cliente
+                cur.execute('DELETE FROM telefone WHERE cliente_id = %s', (id,))
+                
+                # Then, insert the new telefones
+                for telefone in telefones:
+                    if telefone:  # Only add non-empty telefone entries
+                        cur.execute('''
+                            INSERT INTO telefone (cliente_id, telefone)
+                            VALUES (%s, %s)
+                        ''', (id, telefone))
+                
+                flash('Cliente e telefones atualizados com sucesso', 'success')
             else:
                 # Insert a new record if the ID does not exist
                 insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao)
@@ -62,6 +77,12 @@ def cliente_cadastrar(id=None):
         cur = conn.cursor()
         cur.execute('SELECT * FROM cliente WHERE id = %s', (id,))
         cliente = cur.fetchone()
+
+        # Fetch telefones for the cliente
+        cur.execute('SELECT telefone FROM telefone WHERE cliente_id = %s', (id,))
+        telefones = cur.fetchall()
+        telefones_list = [telefone[0] for telefone in telefones]  # Extract the telefone values into a list
+
         cur.close()
         conn.close()
 
@@ -75,11 +96,9 @@ def cliente_cadastrar(id=None):
         'complemento': cliente[5] if cliente else '',
         'municipio': cliente[6] if cliente else '',
         'observacao': cliente[7] if cliente else '',
-        'telefones': cliente[8].split(',') if cliente else '',
-        'situacao': cliente[9] if cliente else ''
+        'situacao': cliente[8] if cliente else '',
+        'telefones': telefones_list if cliente else []  # Use the telefones_list
     }
-
-    print(cliente_data)
 
     next_codigo = get_next_codigo() if cliente is None else cliente[0]
     return render_template('cliente_cadastrar.html', cliente=cliente_data, next_codigo=next_codigo)
@@ -97,9 +116,22 @@ def insert_cliente(nome, endereco, numero, bairro, complemento, municipio, obser
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('''
-        INSERT INTO cliente (nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-    ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao))
+        INSERT INTO cliente (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao))
+    
+    
+    cliente_id = cur.fetchone()[0]  # Get the new cliente id
+    conn.commit()
+
+    # Insert each telefone into the telefones table
+    for telefone in telefones.split(','):
+        if telefone:  # Only insert if the telefone is not empty
+            cur.execute('''
+                INSERT INTO telefones (cliente_id, telefone)
+                VALUES (%s, %s)
+            ''', (cliente_id, telefone.strip()))
+
     conn.commit()
     cur.close()
     conn.close()

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
-from db import get_db_connection
+from static.py.config.db import get_db_connection
 
 pesquisar_impressora_bp = Blueprint('pesquisar_impressora_bp', __name__)
 

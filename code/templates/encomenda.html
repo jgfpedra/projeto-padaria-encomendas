@@ -16,12 +16,14 @@
         <button>Imprimir</button>
         <button>Deletar</button>
         <button>Estornar</button>
-        <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
-            <button type="submit" name="finalizar" value="true" class="btn btn-primary">Finalizar</button>
-        </form>
         <button>Relatório</button>
         <button>Historico</button>
         <button>Observacao</button>
+        {% if encomenda %}
+          <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+              <button type="submit" name="finalizar" value="true" class="btn btn-primary">Finalizar</button>
+          </form>
+        {% endif %}
     </div>
     <div id="popup-content-lancamento-finalizar"></div>
     <div class="main-grid">
@@ -101,7 +103,7 @@
             </div>
           {% endif %}
 
-          {% if (encomenda and not finalizar) %}
+          {% if (encomenda and not session.get('finalizar')) %}
             <!-- Form to add products to an existing encomenda -->
             <div class="telephone-input">
               <h2>Add Products to Encomenda</h2>
@@ -126,17 +128,17 @@
             </div>
           {% endif %}
 
-          {% if finalizar %}
-            <div class="ending-input" id="ending-input-form">
-              <h2>Finalizar encomenda</h2>
-              <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
-                <label for="valor_entrega">Valor entrega:</label>
-                <input type="number" id="valor_entrega" step="0.01" name="valor_entrega" value="{{ valor_entrega }}" required>
-                <label for="desconto">Desconto:</label>
-                <input type="number" id="desconto" step="0.01" name="desconto" value="{{ desconto }}" required>
-                <input type="submit" name="finalizar" value="Finalize">
-              </form>
-            </div>
+          {% if session.get('finalizar') %}
+              <div class="ending-input" id="ending-input-form">
+                  <h2>Finalizar encomenda</h2>
+                  <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=session.get('encomenda_id')) }}">
+                      <label for="valor_entrega">Valor entrega:</label>
+                      <input type="number" id="valor_entrega" step="0.01" name="valor_entrega" value="{{ valor_entrega }}" required>
+                      <label for="desconto">Desconto:</label>
+                      <input type="number" id="desconto" step="0.01" name="desconto" value="{{ desconto }}" required>
+                      <input type="submit" name="finalizar-btn" value="Finalize">
+                  </form>
+              </div>
           {% endif %}
 
           <div class="totals-info">

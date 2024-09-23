@@ -1,5 +1,5 @@
 # static/py/impressora.py
-from db import get_db_connection
+from static.py.config.db import get_db_connection
 
 def create_table():
     """Create the cliente table if it does not exist."""

@@ -47,14 +47,15 @@
                 <input type="text" name="municipio" value="{{ cliente['municipio'] }}" required>
             </label>
             <label>Observacao:
-                <input type="text" name="observacao" value="{{ cliente['observacao'] }}">
+                <input type="text" name="observacao" value="{{ cliente['observacao'] }}" required>
             </label>
         </div>
 
+
         <div id="phone-container">
-            {% if cliente['telefones'] %}
-                {% set phoneCounter = cliente['telefones']|length %}
-                {% for telefone in cliente['telefones'] %}
+            {% if cliente.telefones %}
+                {% set phoneCounter = cliente.telefones|length %}
+                {% for telefone in cliente.telefones %}
                     <div class="phone-row">
                         <label for="phone-{{ loop.index }}" required>Telefone {{ loop.index }}:</label>
                         <input type="text" name="telefones" id="phone-{{ loop.index }}" value="{{ telefone }}" placeholder="Digite o telefone" required>
@@ -68,6 +69,7 @@
                 </div>
             {% endif %}
         </div>
+
         <script>
           let phoneCounter = {{ phoneCounter }};
         </script>

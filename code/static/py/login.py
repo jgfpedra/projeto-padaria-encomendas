@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import psycopg2
 from psycopg2 import sql
-from db import get_db_connection
+from static.py.config.db import get_db_connection
 
 login_bp = Blueprint('login_bp', __name__)
 

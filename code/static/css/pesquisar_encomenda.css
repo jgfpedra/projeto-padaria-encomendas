@@ -15,36 +15,38 @@ body {
 }
 
 .input-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between items */
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #000;
 }
 
 .input-container label {
-    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 10px; /* Space between label and input */
+    flex: 1 1 150px; /* Allow flexibility and set a minimum width */
 }
 
 .input-container input {
     padding: 5px;
-    width: 100%;
+    width: 100%; /* Make inputs responsive */
+    max-width: 200px; /* Optional max width */
+    gap: 10px;
 }
 
-.total-container{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #000;
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 10px;
 }
 
 .results-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
 }
 
 .results-table, .results-table th, .results-table td {

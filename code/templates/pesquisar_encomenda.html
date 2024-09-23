@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Pesquisar Encomenda{% endblock %}
+
+{% block content %}
+    <head>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_encomenda.css') }}">
+      <script src="{{ url_for('static', filename='js/pesquisar_encomenda.js') }}"></script>
+    </head>
+
+    <div class="button-container">
+      <button onclick="window.location.href='{{ url_for('encomenda_bp.encomenda') }}'">Incluir</button>
+      <button type="button">Imprimir</button>
+      <button type="button">Carregar</button>
+    </div>
+
+    <div class="button-container">
+        <form method="POST" action="{{ url_for('pesquisar_encomenda_bp.pesquisar_encomenda') }}" class="input-container">
+            <button type="submit">Pesquisar</button>
+            <label>Código <input type="text" name="id"></label>
+            <label>Data/Hora Criação <input type="text" name="data_hora_criacao" placeholder="YYYY-MM-DD HH:MM:SS"></label>
+            <label>Situação <input type="text" name="situacao"></label>
+            <label>Data Encomenda <input type="text" name="data_encomenda" placeholder="YYYY-MM-DD"></label>
+            <label>Hora Encomenda <input type="text" name="hora_encomenda" placeholder="HH:MM:SS"></label>
+            <label>Tipo <input type="text" name="tipo"></label>
+            <label>Loja <input type="text" name="loja"></label>
+            <label>Cliente ID <input type="text" name="cliente_id"></label>
+            <label>Valor Entrega <input type="text" name="valor_entrega" placeholder="0.00"></label>
+            <label>Desconto <input type="text" name="desconto" placeholder="0.00"></label>
+            <label>Total <input type="text" name="total" placeholder="0.00"></label>
+            <label>Subtotal <input type="text" name="subtotal" placeholder="0.00"></label>
+        </form>
+    </div>
+
+    <div class="table-container">
+      <table class="results-table">
+          <thead>
+              <tr>
+                  <th>Select</th>
+                  <th>Código</th>
+                  <th>Data/Hora Criação</th>
+                  <th>Situação</th>
+                  <th>Data Encomenda</th>
+                  <th>Hora Encomenda</th>
+                  <th>Tipo</th>
+                  <th>Loja</th>
+                  <th>Cliente ID</th>
+                  <th>Subtotal</th>
+                  <th>Valor Entrega</th>
+                  <th>Desconto</th>
+                  <th>Total</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for encomenda in encomendas %}
+                <tr>
+                    <td><input type="radio" name="selected-encomenda" value="{{ encomenda[0] }}" class="client-radio"></td>
+                    <td>{{ encomenda[0] }}</td>
+                    <td>{{ encomenda[1] }}</td>
+                    <td>{{ encomenda[2] }}</td>
+                    <td>{{ encomenda[3] }}</td>
+                    <td>{{ encomenda[4] }}</td>
+                    <td>{{ encomenda[5] }}</td>
+                    <td>{{ encomenda[6] }}</td>
+                    <td>{{ encomenda[7] }}</td>
+                    <td>{{ encomenda[11] }}</td>
+                    <td>{{ encomenda[8] }}</td>
+                    <td>{{ encomenda[9] }}</td>
+                    <td>{{ encomenda[10] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="13">Nenhuma encomenda encontrada.</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+    </div>
+{% endblock %}
