@@ -12,15 +12,19 @@
 </head>
 <body>
     <div class="button-container">
-        <button>Pesquisar</button>
+        <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
+            <button type="submit" name="incluir" value="true" class="btn btn-primary">Incluir</button>
+        </form>
+        <!--
+          Fazer dependencia de qual o status da encomenda
+        -->
         <button>Imprimir</button>
         <button>Deletar</button>
         <button>Estornar</button>
         <button>Relatório</button>
         <button>Historico</button>
-        <button>Observacao</button>
         {% if encomenda %}
-          <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+          <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
               <button type="submit" name="finalizar" value="true" class="btn btn-primary">Finalizar</button>
           </form>
         {% endif %}
@@ -76,14 +80,16 @@
                     </thead>
                     <tbody>
                         {% for item in itens %}
-                        <tr class="selectable-row" data-item-id="{{ item[0] }}">
-                            <td>{{ item.codigo }}</td>
-                            <td>{{ item.descricaoreduzida }}</td>
-                            <td>{{ item.quantidade }}</td>
-                            <td>R$ {{ item.preco_venda }}</td>
-                            <td>R$ {{ item.total }}</td>
-                            <td>{{ item.observacao }}</td>
-                        </tr>
+                          <tr class="selectable-row" data-item-id="{{ item[0] }}">
+                              <td>{{ item.codigo }}</td>
+                              <td>{{ item.descricaoreduzida }}</td>
+                              <td>{{ item.quantidade }}</td>
+                              <td>R$ {{ item.preco_venda }}</td>
+                              <td>R$ {{ item.total }}</td>
+                              <td class="observation-cell" data-itens-encomenda-id="{{ item.itens_encomenda_id }}" data-id-produto="{{ item.codigo }}">
+                                <span class="observation-text">{{ item.observacao }}</span>
+                              </td>
+                          </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -108,13 +114,13 @@
             <div class="telephone-input">
               <h2>Add Products to Encomenda</h2>
               {% if not product_id %}
-                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
                     <label for="product_id">Product ID:</label>
                     <input type="number" id="product_id" name="product_id" required>
                     <input type="submit" value="Add Product">
                 </form>
               {% else %}
-                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[0]) }}">
+                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
                   {% if tipoembalagem == 'KG' %}
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" step="0.001" required>
@@ -127,7 +133,6 @@
               {% endif %}
             </div>
           {% endif %}
-
           {% if session.get('finalizar') %}
               <div class="ending-input" id="ending-input-form">
                   <h2>Finalizar encomenda</h2>

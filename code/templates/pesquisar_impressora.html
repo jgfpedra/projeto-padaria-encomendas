@@ -22,7 +22,6 @@
         <label>Tipo Impressora<input type="text" name="tipo_impressora"></label>
         <label>Modelo Impressora<input type="text" name="modelo_impressora"></label>
         <label>Porta<input type="text" name="porta"></label>
-        <label>Configuracao <input type="text" name="configuracao"></label>
         <label>Utiliza Guilhotina <input type="text" name="utiliza_guilhotina"></label>
       </form>
     </div>
@@ -38,7 +37,6 @@
                 <th>Tipo Impressao</th>
                 <th>Modelo Impressora</th>
                 <th>Porta</th>
-                <th>Configuracao</th>
                 <th>Utiliza Guilhotina</th>
             </tr>
         </thead>
@@ -54,11 +52,10 @@
                     <td>{{ impressora[5] }}</td>
                     <td>{{ impressora[6] }}</td>
                     <td>{{ impressora[7] }}</td>
-                    <td>{{ impressora[8] }}</td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="9">Nenhuma impressora encontrado.</td>
+                    <td colspan="8">Nenhuma impressora encontrado.</td>
                 </tr>
             {% endfor %}
         </tbody>

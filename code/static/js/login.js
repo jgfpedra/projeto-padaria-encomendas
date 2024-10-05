@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle login form submission
     document.getElementById('login-form').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent default form submission
 
@@ -6,20 +7,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('password').value;
 
         fetch('/login', {
-            method: 'POST', // Ensure POST method is used
+            method: 'POST', // Use POST method
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password }) // Ensure JSON is sent
+            body: JSON.stringify({ username, password }) // Send JSON payload
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                window.location.href = '/'; // Redirect on success
+                // Redirect to home page on successful login
+                window.location.href = '/'; 
             } else {
-                alert(data.message); // Show error message
+                // Show error message on login failure
+                alert(data.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error during login:', error));
     });
 });

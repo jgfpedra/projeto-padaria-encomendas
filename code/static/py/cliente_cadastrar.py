@@ -2,12 +2,14 @@
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
 from static.py.config.db import get_db_connection
+from static.py.login_required import login_required
 import regex as re
 
 cliente_cadastrar_bp = Blueprint('cliente_cadastrar_bp', __name__)
 
 @cliente_cadastrar_bp.route('/cliente_cadastrar', methods=['GET', 'POST'])
 @cliente_cadastrar_bp.route('/cliente_cadastrar/<int:id>', methods=['GET', 'POST'])
+@login_required
 def cliente_cadastrar(id=None):
     if request.method == 'POST':
         id = request.form.get('id', id)

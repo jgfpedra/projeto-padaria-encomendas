@@ -1,30 +1,24 @@
-import socket
+#import socket
+import serial
 from static.py.config.db import get_db_connection
 from datetime import datetime
 
+s = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 def print_receipt(receipt_content):
-    host = "192.168.0.20"  # Your printer's IP
-    port = 9100  # Common port for ESC/POS printers
+    #host = "192.168.0.20"  # Your printer's IP
+    #port = 9100  # Common port for ESC/POS printers
 
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((host, port))
-            
-            # Split the receipt into lines
-            lines = receipt_content.split('\n')
-            for line in lines:
-                # Send each line followed by a newline
-                s.sendall(line.encode() + b'\n')  # Send each line
+        lines = receipt_content.split('\n')
+        for line in lines:
+            s.write(line.encode() + b'\n')  # Send each line
 
-            
-            # Add 10 new lines
-            for _ in range(10):
-                s.sendall(b'\n')  # Sending 10 newlines
+        for _ in range(10):
+            s.write(b'\n')  # Sending 10 newlines
 
-            # Send cut command at the end
-            s.sendall(b'\x1D\x69\x00')  # Cut command for ESC/POS
-            s.close()
-            print("Receipt printed successfully.")
+        s.write(b'\x1D\x56\x00')  # Cut the paper
+        s.close()
+        print("Receipt printed successfully.")
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 

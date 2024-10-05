@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
 from static.py.config.db import get_db_connection
+from static.py.login_required import login_required
 
 pesquisar_cliente_bp = Blueprint('pesquisar_cliente_bp', __name__)
 
 @pesquisar_cliente_bp.route('/pesquisar_cliente', methods=['GET', 'POST'])
+@login_required
 def pesquisar_cliente():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -71,9 +73,14 @@ def pesquisar_cliente():
             'telefones': cliente[9] if cliente[9] else []  # Handle no telefones case
         }
         clientes.append(cliente_dict)
+
+    if clientes:
+        clientes.sort(key=lambda row: row['id'])
+
     return render_template('pesquisar_cliente.html', clientes=clientes)
 
 @pesquisar_cliente_bp.route('/delete_cliente', methods=['POST', 'GET'])
+@login_required
 def delete_cliente():
     cliente_id = request.form.get('id', '')
     if cliente_id:

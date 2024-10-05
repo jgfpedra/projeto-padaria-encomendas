@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, Blueprint, flash, redirect, url_for
 import psycopg2
 from static.py.config.db import get_db_connection
+from static.py.login_required import login_required
 
 pesquisar_impressora_bp = Blueprint('pesquisar_impressora_bp', __name__)
 
 @pesquisar_impressora_bp.route('/pesquisar_impressora', methods=['GET', 'POST'])
+@login_required
 def pesquisar_impressora():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -17,12 +19,11 @@ def pesquisar_impressora():
     tipo_impressao = request.form.get('tipo_impressao', '')
     modelo_impressora = request.form.get('modelo_impressora', '')
     porta = request.form.get('porta', '')
-    configuracao = request.form.get('configuracao', '')
     utiliza_guilhotina = request.form.get('utiliza_guilhotina', '')
 
     # Build query with filters
     query = """
-        SELECT id, loja, descricao, endereco, tipo_impressao, modelo_impressora, porta, configuracao, utiliza_guilhotina
+        SELECT id, loja, descricao, endereco, tipo_impressao, modelo_impressora, porta, utiliza_guilhotina
         FROM impressora
         WHERE (%s IS NULL OR id = %s)
         AND (%s IS NULL OR loja = %s)
@@ -31,7 +32,6 @@ def pesquisar_impressora():
         AND (%s IS NULL OR tipo_impressao ILIKE %s)
         AND (%s IS NULL OR modelo_impressora ILIKE %s)
         AND (%s IS NULL OR porta ILIKE %s)
-        AND (%s IS NULL OR configuracao ILIKE %s)
         AND (%s IS NULL OR utiliza_guilhotina = %s);
     """
 
@@ -51,8 +51,6 @@ def pesquisar_impressora():
         None if not modelo_impressora else f'%{modelo_impressora}%',
         None if not porta else f'%{porta}%',
         None if not porta else f'%{porta}%',
-        None if not configuracao else f'%{configuracao}%',
-        None if not configuracao else f'%{configuracao}%',
         None if not utiliza_guilhotina else f'%{utiliza_guilhotina}%',
         None if not utiliza_guilhotina else f'%{utiliza_guilhotina}%',
     ]
@@ -66,6 +64,7 @@ def pesquisar_impressora():
     return render_template('pesquisar_impressora.html', impressoras=impressoras_data)
 
 @pesquisar_impressora_bp.route('/delete_impressora', methods=['POST', 'GET'])
+@login_required
 def delete_impressora():
     impressora_id = request.form.get('id', '')
     if impressora_id:

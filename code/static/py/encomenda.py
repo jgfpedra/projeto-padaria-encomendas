@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, Blueprint, flash, redirect, u
 import psycopg2
 from static.py.config.db import get_db_connection
 from static.py.config.db_vr import get_db_vr
+from static.py.login_required import login_required
 from datetime import datetime
 from decimal import Decimal
 from printer import print_receipt, format_receipt_encomenda
@@ -10,54 +11,142 @@ encomenda_bp = Blueprint('encomenda_bp', __name__)
 
 def get_client(conn, cellphone):
     with conn.cursor() as cur:
-        # Prepare the query to find a client with the provided phone number
         query = "SELECT cliente_id FROM telefone WHERE telefone = %s"
-        cur.execute(query, (cellphone,))  # Use a tuple to pass the parameter
+        cur.execute(query, (cellphone,))
         clients = cur.fetchone()
+        print(clients)
         if clients:
-            return clients[0]  # Return the first client's ID found
+            return clients[0]
         else:
-            raise ValueError("No valid cellphone numbers found")  # Raise an error if no client found
+            raise ValueError("No valid cellphone numbers found")
 
 def add_encomenda(conn, situacao, data_encomenda, hora_encomenda, tipo, loja, client_id, data_criacao, hora_criacao):
     with conn.cursor() as cur:
-        # Fetch the last order's creation date
-        cur.execute("SELECT data_criacao, encomenda_id FROM encomenda ORDER BY id desc limit 1")
+        cur.execute("SELECT data_criacao, encomenda_id FROM encomenda ORDER BY id DESC LIMIT 1")
         last_order_data = cur.fetchone()
 
-        print(last_order_data)
-        # Reset or increment encomenda_id based on the comparison
-        if last_order_data == None:
-            encomenda_id = 1  # Reset if the last order is from a different
-        elif last_order_data[0] == data_criacao:
-            encomenda_id = int(last_order_data[1]) + 1  # Increment if the last order is from today
+        if last_order_data:  # Check if last_order_data is not empty
+            last_date = last_order_data[0]  # Unpack the first element of the outer tuple
+            last_id = last_order_data[1]
+            if last_date == data_criacao:
+                encomenda_id = last_id + 1
+            else:
+                encomenda_id = 1  # Default logic
+        else:
+            print("No last order data.")
+            encomenda_id = 1  # Default if there's no last order data
 
-        print(encomenda_id)
         cur.execute("""INSERT INTO encomenda (situacao, data_encomenda, hora_encomenda,
             tipo, loja, cliente_id, encomenda_id, data_criacao, hora_criacao) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
             (situacao, data_encomenda, hora_encomenda, tipo, loja, client_id, encomenda_id, data_criacao, hora_criacao))
         conn.commit()
-
         return encomenda_id
 
 def add_item_to_encomenda(conn, encomenda_id, product_id, quantity, valor_item, valor_item_total):
     with conn.cursor() as cur:
         data_criacao = datetime.now().date()
-        cur.execute("SELECT data_criacao, hora_criacao FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data_criacao, ))
+        cur.execute("SELECT data_criacao, hora_criacao FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data_criacao))
         data_hora_criacao = cur.fetchone()
         cur.execute("INSERT INTO itens_encomenda (id_encomenda, id_produtos, quantidade, valor_item_total, valor_item, data_criacao, hora_criacao) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (encomenda_id, product_id, quantity,
                      valor_item_total, valor_item, data_hora_criacao[0], data_hora_criacao[1]))
         conn.commit()
 
+def fetch_encomenda(conn, encomenda_id):
+    with conn.cursor() as cur:
+        data = datetime.now().date()
+        cur.execute("SELECT * FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data))
+        return cur.fetchone()
+
+'''
+def fetch_observacao(conn, id_itens_encomenda, item_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT observacao
+        FROM observacao
+        WHERE id_itens_encomenda = %s
+        AND id_item_produto = %s
+        """, (id_itens_encomenda, item_id,))
+        result = cur.fetchone()
+
+        if result:
+            return result[0]
+        else:
+            return None
+'''
+
+def fetch_products(conn, conn_vr, itens_data):
+    products = {}
+    with conn_vr.cursor() as cur_vr:
+        for item in itens_data:
+            itens_encomenda_id, item_id, quantity = item[0], item[2], item[3]
+            #observacao = (fetch_observacao(conn, itens_encomenda_id, item_id) or None)
+            observacao = None
+            preco = fetch_product_price(cur_vr, item_id)
+            product_info = fetch_product_info(cur_vr, item_id)
+
+            if product_info:
+                codigo, descricaoreduzida = product_info
+                if codigo not in products:
+                    products[codigo] = {
+                        'codigo': codigo,
+                        'descricaoreduzida': descricaoreduzida,
+                        'quantidade': 0,
+                        'preco_venda': preco,
+                        'total': 0,
+                        'itens_encomenda_id': itens_encomenda_id,
+                    }
+                products[codigo]['quantidade'] += round(quantity, 3)
+                products[codigo]['total'] = round(products[codigo]['quantidade'], 3) * round(products[codigo]['preco_venda'], 2)
+                products[codigo]['total'] = round(products[codigo]['total'], 2)
+
+                if observacao:
+                    products[codigo]['observacao'] = observacao
+    return products
+
+def fetch_product_price(cur_vr, item_id):
+    cur_vr.execute("SELECT precovenda FROM venda WHERE id_produto = %s ORDER BY id DESC LIMIT 1", (item_id,))
+    preco_result = cur_vr.fetchone()
+    return Decimal(preco_result[0]) if preco_result else Decimal('0.00')
+
+def fetch_product_info(cur_vr, item_id):
+    cur_vr.execute("SELECT id, descricaoreduzida FROM produto WHERE id = %s", (item_id,))
+    return cur_vr.fetchone()
+
+def fetch_cliente(conn, client_id):
+    with conn.cursor() as cur:
+        cur.execute("SELECT * FROM cliente WHERE id = %s", (client_id,))
+        return cur.fetchone()
+
+def fetch_itens_encomenda(conn, encomenda_id):
+    with conn.cursor() as cur:
+        data = datetime.now().date()
+        cur.execute("SELECT * FROM itens_encomenda WHERE id_encomenda = %s AND data_criacao = %s", (encomenda_id, data))
+        return (cur.fetchall() or [])
+
+def calculate_totals(products, encomenda_data):
+    subtotal = sum(Decimal(item['total']) for item in products.values())
+    valor_entrega = Decimal(encomenda_data[7]) if encomenda_data[7] is not None else Decimal('0.00')
+    desconto = Decimal(encomenda_data[8]) if encomenda_data[8] is not None else Decimal('0.00')
+    total = subtotal + valor_entrega - desconto
+    return subtotal, valor_entrega, desconto, total
+
+def update_encomenda(conn, encomenda_id, subtotal):
+    with conn.cursor() as cur:
+        cur.execute("""
+            UPDATE encomenda 
+            SET subtotal = %s
+            WHERE encomenda_id = %s
+        """, (subtotal, encomenda_id))
+        conn.commit()
+
 def fetch_encomenda_data(conn, conn_vr, encomenda_id):
     context = initialize_context()
-
     encomenda_data = fetch_encomenda(conn, encomenda_id)
     if encomenda_data:
         itens_data = fetch_itens_encomenda(conn, encomenda_id)
-        products = fetch_products(conn_vr, itens_data)
+        products = fetch_products(conn, conn_vr, itens_data)
         cliente_data = fetch_cliente(conn, encomenda_data[6])
 
         subtotal, valor_entrega, desconto, total = calculate_totals(products, encomenda_data)
@@ -76,7 +165,6 @@ def fetch_encomenda_data(conn, conn_vr, encomenda_id):
             'tipoembalagem': session.get('tipoembalagem', 'DEFAULT'),
             'finalizar': session.get('finalizar', False)
         })
-    
     return context
 
 def initialize_context():
@@ -93,72 +181,6 @@ def initialize_context():
         'finalizar': False
     }
 
-def fetch_encomenda(conn, encomenda_id):
-    with conn.cursor() as cur:
-        data = datetime.now().date()
-        cur.execute("SELECT * FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data))
-        return cur.fetchone()
-
-def fetch_itens_encomenda(conn, encomenda_id):
-    with conn.cursor() as cur:
-        data = datetime.now().date()
-        cur.execute("SELECT * FROM itens_encomenda WHERE id_encomenda = %s AND data_criacao = %s", (encomenda_id, data))
-        return cur.fetchall() or []
-
-def fetch_products(conn_vr, itens_data):
-    products = {}
-    with conn_vr.cursor() as cur_vr:
-        for item in itens_data:
-            item_id, quantity = item[2], item[3]
-            preco = fetch_product_price(cur_vr, item_id)
-            product_info = fetch_product_info(cur_vr, item_id)
-
-            if product_info:
-                codigo, descricaoreduzida = product_info
-                if codigo not in products:
-                    products[codigo] = {
-                        'codigo': codigo,
-                        'descricaoreduzida': descricaoreduzida,
-                        'quantidade': 0,
-                        'preco_venda': preco,
-                        'total': 0
-                    }
-
-                products[codigo]['quantidade'] += round(quantity, 3)
-                products[codigo]['total'] = round(products[codigo]['quantidade'], 3) * round(products[codigo]['preco_venda'], 2)
-                products[codigo]['total'] = round(products[codigo]['total'], 2)
-    return products
-
-def fetch_product_price(cur_vr, item_id):
-    cur_vr.execute("SELECT precovenda FROM venda WHERE id_produto = %s ORDER BY id DESC LIMIT 1", (item_id,))
-    preco_result = cur_vr.fetchone()
-    return Decimal(preco_result[0]) if preco_result else Decimal('0.00')
-
-def fetch_product_info(cur_vr, item_id):
-    cur_vr.execute("SELECT id, descricaoreduzida FROM produto WHERE id = %s", (item_id,))
-    return cur_vr.fetchone()
-
-def fetch_cliente(conn, client_id):
-    with conn.cursor() as cur:
-        cur.execute("SELECT * FROM cliente WHERE id = %s", (client_id,))
-        return cur.fetchone()
-
-def calculate_totals(products, encomenda_data):
-    subtotal = sum(Decimal(item['total']) for item in products.values())
-    valor_entrega = Decimal(encomenda_data[7]) if encomenda_data[7] is not None else Decimal('0.00')
-    desconto = Decimal(encomenda_data[8]) if encomenda_data[8] is not None else Decimal('0.00')
-    total = subtotal + valor_entrega - desconto
-    return subtotal, valor_entrega, desconto, total
-
-def update_encomenda(conn, encomenda_id, subtotal):
-    with conn.cursor() as cur:
-        cur.execute("""
-            UPDATE encomenda 
-            SET subtotal = %s
-            WHERE id = %s
-        """, (subtotal, encomenda_id))
-        conn.commit()
-
 def handle_product_id(conn, product_id, encomenda_id):
     with conn.cursor() as cur:
         cur.execute("SELECT id_tipoembalagem FROM produto WHERE id = %s", (product_id,))
@@ -173,7 +195,7 @@ def handle_product_id(conn, product_id, encomenda_id):
                 flash('Packaging type not found.', 'error')
         else:
             flash('Product ID not found.', 'error')
-            session.pop('product_id', None)  # Remove product_id from session if not found
+            session.pop('product_id', None)
 
 def handle_product_addition(conn_vr, conn, encomenda_id):
     if encomenda_id:
@@ -181,65 +203,77 @@ def handle_product_addition(conn_vr, conn, encomenda_id):
         quantity = request.form.get('quantity', '')
 
         if product_id and not quantity:
+            session['encomenda_id'] = encomenda_id
             session['product_id'] = int(product_id)
             handle_product_id(conn_vr, product_id, encomenda_id)
 
         elif quantity and 'product_id' in session:
-            with conn_vr.cursor() as cur:
-                cur.execute("SELECT precovenda FROM venda WHERE id_produto = %s ORDER BY id DESC LIMIT 1", (session['product_id'],))
-                valor_item = Decimal(cur.fetchone()[0])
-                valor_item_total = Decimal(valor_item) * Decimal(quantity)
-                product_id = session.pop('product_id', None)
-                tipoembalagem = session.pop('tipoembalagem', None)
-
-        if quantity and tipoembalagem:
-            add_item_to_encomenda(conn, encomenda_id, product_id, quantity, valor_item, valor_item_total)
+            try:
+                valor_item = fetch_product_price(conn_vr.cursor(), session['product_id'])
+                valor_item_total = valor_item * Decimal(quantity)
+                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total)
+                session.pop('product_id', None)
+                flash('Product added successfully.', 'success')
+            except Exception as e:
+                flash(f'Error adding product: {e}', 'error')
 
 def handle_post_requests(conn, conn_vr, encomenda_id):
     if 'cellphone' in request.form:
-        cellphone = request.form.get('cellphone')
-        try:
-            client_id = get_client(conn, cellphone)
-        except ValueError as e:
-            flash(str(e), 'error')  # Flash the error message
-            return False  # Indicate that an error occurred
-
-        data_criacao = datetime.now().date()
-        hora_criacao = datetime.now().time()
-        situacao = 'Digitando'
-        data_encomenda = datetime.now().date()
-        hora_encomenda = datetime.now().time()
-        tipo = 'Entrega'
-        loja = 1
-
-        encomenda_id = add_encomenda(conn, situacao, data_encomenda, hora_encomenda, tipo, loja, client_id, data_criacao, hora_criacao)
-        session['encomenda_id'] = encomenda_id
-        return True  # Indicate success
-
+        return handle_cellphone_request(conn, encomenda_id)
     if 'finalizar' in request.form:
-        session['finalizar'] = True
-        session['encomenda_id'] = encomenda_id
-        return redirect(url_for('encomenda_bp.encomenda', encomenda_id=encomenda_id))
-
+        return handle_finalize_request(encomenda_id)
     if session.get('finalizar', False):
-        if 'valor_entrega' in request.form and 'desconto' in request.form:
-            try:
-                valor_entrega = Decimal(request.form.get('valor_entrega', 0.00))
-                desconto = Decimal(request.form.get('desconto', 0.00))
-                finalize_encomenda(conn, encomenda_id, valor_entrega, desconto)
-                # Create the formatted receipt text
-                receipt_text = format_receipt_encomenda(conn, conn_vr, encomenda_id)
-                print_receipt(receipt_text)
-                session.pop('finalizar', None)
-                return redirect(url_for('encomenda_bp.encomenda'))  # Redirect to the base URL
-            except ValueError:
-                flash('Invalid value for "valor_entrega" or "desconto".', 'error')
-        else:
-            flash('Both "valor_entrega" and "desconto" are required.', 'error')
-
+        return handle_finalization(conn, conn_vr, encomenda_id)
     handle_product_addition(conn_vr, conn, encomenda_id)
     return False
 
+def handle_cellphone_request(conn, encomenda_id):
+    cellphone = request.form.get('cellphone')
+    print(cellphone)
+    try:
+        client_id = get_client(conn, cellphone)
+    except ValueError as e:
+        flash(str(e), 'error')
+        return False
+
+    encomenda_id = create_encomenda(conn, client_id)
+    session['encomenda_id'] = encomenda_id
+    return True
+
+def create_encomenda(conn, client_id):
+    data_criacao = datetime.now().date()
+    hora_criacao = datetime.now().time()
+    situacao = 'Digitando'
+    data_encomenda = datetime.now().date()
+    hora_encomenda = datetime.now().time()
+    tipo = 'Entrega'
+    loja = 1
+
+    return add_encomenda(conn, situacao, data_encomenda, hora_encomenda, tipo, loja, client_id, data_criacao, hora_criacao)
+
+def handle_finalize_request(encomenda_id):
+    session['finalizar'] = True
+    session['encomenda_id'] = encomenda_id
+    return redirect(url_for('encomenda_bp.encomenda', encomenda_id=session['encomenda_id']))
+
+def handle_finalization(conn, conn_vr, encomenda_id):
+    if 'valor_entrega' in request.form and 'desconto' in request.form:
+        try:
+            valor_entrega = Decimal(request.form.get('valor_entrega', 0.00))
+            desconto = Decimal(request.form.get('desconto', 0.00))
+            finalize_encomenda(conn, encomenda_id, valor_entrega, desconto)
+            
+            receipt_text = format_receipt_encomenda(conn, conn_vr, encomenda_id)
+            print_receipt(receipt_text)
+
+            session.pop('finalizar', None)
+            return redirect(url_for('encomenda_bp.encomenda'))
+        except ValueError:
+            flash('Invalid value for "valor_entrega" or "desconto".', 'error')
+    else:
+        flash('Both "valor_entrega" and "desconto" are required.', 'error')
+    
+    return False
 
 def finalize_encomenda(conn, encomenda_id, valor_entrega, desconto):
     try:
@@ -259,23 +293,37 @@ def finalize_encomenda(conn, encomenda_id, valor_entrega, desconto):
     except Exception as e:
         print(f"Error finalizing encomenda: {e}")
 
+def update_item_observacao(conn, itens_encomenda_id, id_produto, nova_observacao):
+    with conn.cursor() as cur:
+        # Check if an observation already exists
+        cur.execute("SELECT * FROM observacao WHERE id_itens_encomenda = %s AND id_item_produto = %s", 
+                    (itens_encomenda_id, id_produto))
+        existing_observation = cur.fetchone()
+
+        if existing_observation:
+            # Update existing observation
+            cur.execute("""
+                UPDATE observacao 
+                SET observacao = %s 
+                WHERE id_itens_encomenda = %s AND id_item_produto = %s
+            """, (nova_observacao, itens_encomenda_id, id_produto))
+        else:
+            # Create new observation
+            cur.execute("""
+                INSERT INTO observacao (id_itens_encomenda, id_item_produto, observacao) 
+                VALUES (%s, %s, %s)
+            """, (itens_encomenda_id, id_produto, nova_observacao))
+        
+        conn.commit()
+
 @encomenda_bp.route('/encomenda', methods=['GET', 'POST'])
 @encomenda_bp.route('/encomenda/<int:encomenda_id>', methods=['GET', 'POST'])
+@login_required
 def encomenda(encomenda_id=None):
     conn = get_db_connection()
     conn_vr = get_db_vr()
-    context = {
-        'encomenda': None,
-        'itens': [],
-        'cliente': None,
-        'subtotal': 0.00,
-        'valor_entrega': 0.00,
-        'desconto': 0.00,
-        'total': 0.00,
-        'product_id': None,
-        'tipoembalagem': 'DEFAULT',
-        'finalizar': False
-    }
+    context = initialize_context()
+    session['encomenda_id'] = encomenda_id
 
     try:
         if request.method == 'POST':
@@ -291,3 +339,44 @@ def encomenda(encomenda_id=None):
         conn_vr.close()
 
     return render_template('encomenda.html', **context)
+
+@encomenda_bp.route('/update_observacao', methods=['POST'])
+@login_required
+def update_observacao():
+    conn = get_db_connection()
+    data = request.get_json()
+    try:
+        itens_encomenda_id = data.get('itens_encomenda_id')
+        id_produto = data.get('id_produto')
+        nova_observacao = data.get('nova_observacao')
+
+        print(itens_encomenda_id, id_produto, nova_observacao)
+        if itens_encomenda_id and id_produto and nova_observacao:
+            update_item_observacao(conn, itens_encomenda_id, id_produto, nova_observacao)
+            flash('Observation updated successfully.', 'success')
+        else:
+            flash('All fields are required.', 'error')
+
+    except Exception as e:
+        flash(f'An error occurred: {e}', 'error')
+    finally:
+        conn.close()
+
+    return redirect(url_for('encomenda_bp.encomenda', encomenda_id=session.get('encomenda_id')))
+
+@encomenda_bp.route('/delete_observacao', methods=['POST'])
+@login_required
+def delete_observacao():
+    data = request.get_json()
+    itens_encomenda_id = data.get('itens_encomenda_id')
+    id_produto = data.get('id_produto')
+    delete_observation_from_db(itens_encomenda_id, id_produto)
+
+def delete_observation_from_db(itens_encomenda_id, id_produto):
+    # Example SQL to delete the observation
+    with conn.cursor() as cur:
+        cur.execute("""
+            DELETE FROM observacao
+            WHERE id_itens_encomenda = %s AND id_item_produto = %s
+        """, (itens_encomenda_id, id_produto))
+    conn.commit()  # Commit the changes to the database

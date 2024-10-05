@@ -1,4 +1,4 @@
-body {
+{
     font-family: Arial, sans-serif;
     margin: 0;
 }
@@ -15,27 +15,26 @@ body {
 }
 
 .input-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between items */
+    display: grid; /* Use grid for layout */
+    grid-template-columns: repeat(2, 1fr); /* Two columns, equal width */
+    gap: 20px; /* Space between items */
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #000;
+    width: 100%; /* Ensure the container takes full width */
 }
 
 .input-container label {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 10px; /* Space between label and input */
-    flex: 1 1 150px; /* Allow flexibility and set a minimum width */
+    flex-direction: column; /* Stack label and input vertically */
+    width: 100%; /* Ensure labels take full width */
 }
 
-.input-container input {
+.input-container input, 
+.input-container select { /* Include select in the styling */
     padding: 5px;
     width: 100%; /* Make inputs responsive */
-    max-width: 200px; /* Optional max width */
-    gap: 10px;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .table-container {
@@ -61,3 +60,4 @@ body {
 .results-table th {
     background-color: #f2f2f2;
 }
+

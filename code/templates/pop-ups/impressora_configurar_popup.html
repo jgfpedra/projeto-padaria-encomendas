@@ -2,8 +2,15 @@
 <div id="popup" style="display: none;">
   <div class="popup-content-impressora">
     <span class="close-button" onclick="closePopupConfigurar()">×</span>
-    <h2>Welcome!</h2>
-    <p>This is your pop-up content.</p>
+    <h2>Select Printer</h2>
+
+    <form id="printerForm">
+      <label for="printerSelect">Select Printer:</label>
+      <select id="printerSelect" name="id_impressora">
+        <!-- Options will be populated dynamically -->
+      </select>
+      <button type="submit">Select Printer</button>
+    </form>
   </div>
 </div>
 
