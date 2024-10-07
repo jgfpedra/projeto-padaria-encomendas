@@ -19,15 +19,17 @@
           Fazer dependencia de qual o status da encomenda
         -->
         <button>Imprimir</button>
-        <button>Deletar</button>
+        {% if encomenda %}
+          <form method="post" class="delete-form" action="{{ url_for('encomenda_bp.delete_item') }}">
+            <input type="hidden" name="itens_encomenda_id" id="delete-itens-encomenda-id">
+            <input type="hidden" name="id_produto" id="delete-product-id">
+            <input type="hidden" name="date" id="delete-date">
+            <button type="submit" name="deletar" value="true" class="btn btn-danger">Deletar</button>
+          </form>
+        {% endif %}
         <button>Estornar</button>
         <button>Relatório</button>
         <button>Historico</button>
-        {% if encomenda %}
-          <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
-              <button type="submit" name="finalizar" value="true" class="btn btn-primary">Finalizar</button>
-          </form>
-        {% endif %}
     </div>
     <div id="popup-content-lancamento-finalizar"></div>
     <div class="main-grid">
@@ -37,12 +39,13 @@
             <div class="order-info">
                 <h3>Informações do Pedido</h3>
                 {% if encomenda %}
-                  <label>Loja: <span>{{ encomenda[6] }}</span></label>
-                  <label>Número Venda: <span>{{ encomenda[0] }}</span></label>
-                  <label>Data e Hora Criação: <span>{{ encomenda[1] }}</span></label>
-                  <label>Situação: <span>{{ encomenda[2] }}</span></label>
-                  <label>Data Encomenda: <span>{{ encomenda[3] }}</span></label>
-                  <label>Hora Encomenda: <span>{{ encomenda[4] }}</span></label>
+                  <label>Loja: <span>{{ encomenda[5] }}</span></label>
+                  <label>Número Venda: <span>{{ encomenda[11] }}</span></label>
+                  <label>Data Criação: <span>{{ encomenda[2] }}</span></label>
+                  <label>Hora Criação: <span>{{ encomenda[3] }}</span></label>
+                  <label>Situação: <span>{{ encomenda[1] }}</span></label>
+                  <label>Data Encomenda: <span>{{ encomenda[12] }}</span></label>
+                  <label>Hora Encomenda: <span>{{ encomenda[13] }}</span></label>
                 {% endif %}
             </div>
 
@@ -50,16 +53,18 @@
             <div class="client-info" id="client-info">
                 <h3>Informações do Cliente</h3>
                 {% if cliente %}
-                  <label>Código: <span>{{ cliente[0] }}</span></label>
-                  <label>Nome: <span>{{ cliente[1] }}</span></label>
-                  <label>Telefone: <span>{{ cliente[2] }}</span></label>
-                  <label>Município: <span>{{ cliente[3] }}</span></label>
-                  <label>Cidade: <span>{{ cliente[4] }}</span></label>
-                  <label>Bairro: <span>{{ cliente[5] }}</span></label>
-                  <label>Endereço: <span>{{ cliente[6] }}</span></label>
-                  <label>Número: <span>{{ cliente[7] }}</span></label>
-                  <label>Complemento: <span>{{ cliente[8] }}</span></label>
-                  <label>Observação: <span>{{ cliente[9] }}</span></label>
+                  <label>Código: <span>{{ cliente.dados[0] }}</span></label>
+                  <label>Nome: <span>{{ cliente.dados[1] }}</span></label>
+                  <label>Telefone:</label>
+                      {% for tel in cliente.telefone %}
+                          <span>{{ tel[0] }}</span>
+                      {% endfor %}
+                  <label>Município: <span>{{ cliente.dados[6] }}</span></label>
+                  <label>Bairro: <span>{{ cliente.dados[4] }}</span></label>
+                  <label>Endereço: <span>{{ cliente.dados[2] }}</span></label>
+                  <label>Número: <span>{{ cliente.dados[3] }}</span></label>
+                  <label>Complemento: <span>{{ cliente.dados[5] }}</span></label>
+                  <label>Observação: <span>{{ cliente.dados[7] }}</span></label>
                 {% endif %}
             </div>
 
@@ -80,7 +85,7 @@
                     </thead>
                     <tbody>
                         {% for item in itens %}
-                          <tr class="selectable-row" data-item-id="{{ item[0] }}">
+                        <tr class="selectable-row" data-itens-encomenda-id="{{ item.itens_encomenda_id }}" data-id-produto="{{ item.codigo }}" data-date="{{ encomenda[12] }}">
                               <td>{{ item.codigo }}</td>
                               <td>{{ item.descricaoreduzida }}</td>
                               <td>{{ item.quantidade }}</td>
@@ -102,9 +107,9 @@
             <!-- Form to create a new encomenda -->
             <div class="telephone-input">
               <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
-                  <label for="cellphone">Cellphone:</label>
-                  <input type="text" id="cellphone" name="cellphone" required>
-                  <input type="submit" value="Create Encomenda">
+                <label for="cellphone">Cellphone:</label>
+                <input type="text" id="cellphone" name="cellphone" required pattern="^\(\d{2}\)\d{8,9}$" title="Format: (99)999999999 or (99)99999999" oninput="formatCellphone()">
+                <input type="submit" value="Create Encomenda">
               </form>
             </div>
           {% endif %}
@@ -114,13 +119,13 @@
             <div class="telephone-input">
               <h2>Add Products to Encomenda</h2>
               {% if not product_id %}
-                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
+                <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=encomenda[11]) }}">
                     <label for="product_id">Product ID:</label>
                     <input type="number" id="product_id" name="product_id" required>
                     <input type="submit" value="Add Product">
                 </form>
               {% else %}
-                <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=encomenda[11]) }}">
+                <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=encomenda[11]) }}">
                   {% if tipoembalagem == 'KG' %}
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" step="0.001" required>
@@ -136,7 +141,7 @@
           {% if session.get('finalizar') %}
               <div class="ending-input" id="ending-input-form">
                   <h2>Finalizar encomenda</h2>
-                  <form method="post" action="{{ url_for('encomenda_bp.encomenda', encomenda_id=session.get('encomenda_id')) }}">
+                  <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=session.get('encomenda_id')) }}">
                       <label for="valor_entrega">Valor entrega:</label>
                       <input type="number" id="valor_entrega" step="0.01" name="valor_entrega" value="{{ valor_entrega }}" required>
                       <label for="desconto">Desconto:</label>

@@ -17,11 +17,10 @@ def pesquisar_cliente():
     telefone = request.form.get('telefone', '')
     municipio = request.form.get('municipio', '')
     endereco = request.form.get('endereco', '')
-    situacao = request.form.get('situacao', '')
 
     # Build query with filters
     query = """
-        SELECT c.id, c.nome, c.endereco, c.numero, c.bairro, c.complemento, c.municipio, c.observacao, c.situacao,
+        SELECT c.id, c.nome, c.endereco, c.numero, c.bairro, c.complemento, c.municipio, c.observacao,
                array_agg(t.telefone) AS telefones
         FROM cliente c
         LEFT JOIN telefone t ON c.id = t.cliente_id
@@ -30,7 +29,6 @@ def pesquisar_cliente():
         AND (%s IS NULL OR c.numero ILIKE %s)
         AND (%s IS NULL OR c.municipio ILIKE %s)
         AND (%s IS NULL OR c.endereco ILIKE %s)
-        AND (%s IS NULL OR c.situacao ILIKE %s)
         GROUP BY c.id
     """
 
@@ -46,8 +44,6 @@ def pesquisar_cliente():
         None if not municipio else f'%{municipio}%',
         None if not endereco else f'%{endereco}%',
         None if not endereco else f'%{endereco}%',
-        None if not situacao else f'%{situacao}%',
-        None if not situacao else f'%{situacao}%'
     ]
 
     # Execute query with parameters
@@ -69,8 +65,7 @@ def pesquisar_cliente():
             'complemento': cliente[5],
             'municipio': cliente[6],
             'observacao': cliente[7],
-            'situacao': cliente[8],
-            'telefones': cliente[9] if cliente[9] else []  # Handle no telefones case
+            'telefones': cliente[8] if cliente[8] else []  # Handle no telefones case
         }
         clientes.append(cliente_dict)
 

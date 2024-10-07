@@ -186,3 +186,8 @@ h2 {
     flex-wrap: wrap;
     gap: 10px; /* Space between labels */
 }
+
+.selectable-row.selected {
+    background-color: #f0f0f0; /* Highlight color */
+    transition: background-color 0.3s;
+}

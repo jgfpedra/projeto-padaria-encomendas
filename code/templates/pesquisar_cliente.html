@@ -22,7 +22,6 @@
             <label>Telefone <input type="text" name="telefone"></label>
             <label>Municipio <input type="text" name="municipio"></label>
             <label>Endereco <input type="text" name="endereco"></label>
-            <label>Situacao <input type="text" name="situacao"></label>
         </form>
     </div>
     <div class="table-container">
@@ -39,7 +38,6 @@
                   <th>Município</th>
                   <th>Observação</th>
                   <th>Telefones</th>
-                  <th>Situação</th>
               </tr>
           </thead>
           <tbody>
@@ -55,11 +53,10 @@
                       <td>{{ cliente.municipio }}</td>
                       <td>{{ cliente.observacao }}</td>
                       <td>{{ cliente.telefones | join(', ') }}</td>
-                      <td>{{ cliente.situacao }}</td>
                   </tr>
               {% else %}
                   <tr>
-                      <td colspan="11">Nenhum cliente encontrado.</td>
+                      <td colspan="10">Nenhum cliente encontrado.</td>
                   </tr>
               {% endfor %}
           </tbody>

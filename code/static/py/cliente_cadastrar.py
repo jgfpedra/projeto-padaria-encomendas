@@ -21,7 +21,6 @@ def cliente_cadastrar(id=None):
         municipio = request.form.get('municipio', '')
         observacao = request.form.get('observacao', '')
         telefones = ','.join(request.form.getlist('telefones'))
-        situacao = "ATIVO"
 
         if not (re.validate_id(id) and re.validate_name(nome) and re.validate_address(endereco) and
             re.validate_number(numero) and re.validate_bairro(bairro) and
@@ -39,9 +38,9 @@ def cliente_cadastrar(id=None):
                 # Update the existing record in cliente
                 cur.execute('''
                     UPDATE cliente
-                    SET nome = %s, endereco = %s, numero = %s, bairro = %s, complemento = %s, municipio = %s, observacao = %s, situacao = %s
+                    SET nome = %s, endereco = %s, numero = %s, bairro = %s, complemento = %s, municipio = %s, observacao = %s
                     WHERE id = %s
-                ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao, id))
+                ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, id))
                 
                 # Now update the telefones
                 telefones = request.form.getlist('telefones')
@@ -60,10 +59,10 @@ def cliente_cadastrar(id=None):
                 flash('Cliente e telefones atualizados com sucesso', 'success')
             else:
                 # Insert a new record if the ID does not exist
-                insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao)
+                insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones)
                 flash('Cliente cadastrado com sucesso', 'success')
         else:  # If no id is provided, create a new record
-            insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao)
+            insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones)
             flash('Cliente cadastrado com sucesso', 'success')
 
         conn.commit()
@@ -98,7 +97,6 @@ def cliente_cadastrar(id=None):
         'complemento': cliente[5] if cliente else '',
         'municipio': cliente[6] if cliente else '',
         'observacao': cliente[7] if cliente else '',
-        'situacao': cliente[8] if cliente else '',
         'telefones': telefones_list if cliente else []  # Use the telefones_list
     }
 
@@ -114,13 +112,13 @@ def get_next_codigo():
     conn.close()
     return next_codigo
 
-def insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones, situacao):
+def insert_cliente(nome, endereco, numero, bairro, complemento, municipio, observacao, telefones):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('''
-        INSERT INTO cliente (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao)
+        INSERT INTO cliente (nome, endereco, numero, bairro, complemento, municipio, observacao)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    ''', (nome, endereco, numero, bairro, complemento, municipio, observacao, situacao))
+    ''', (nome, endereco, numero, bairro, complemento, municipio, observacao))
     
     
     cliente_id = cur.fetchone()[0]  # Get the new cliente id

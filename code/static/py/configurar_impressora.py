@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Blueprint, jsonify, flash
+from flask import Flask, render_template, request, Blueprint, jsonify, flash, redirect
 import psycopg2
 from static.py.config.db import get_db_connection
 from static.py.login_required import login_required
@@ -60,6 +60,3 @@ def configurar_impressora():
         finally:
             cursor.close()
             conn.close()
-
-        # Redirect to the desired view after processing
-        return redirect()  # Adjust redirection as needed

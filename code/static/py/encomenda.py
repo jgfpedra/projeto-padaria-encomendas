@@ -14,7 +14,6 @@ def get_client(conn, cellphone):
         query = "SELECT cliente_id FROM telefone WHERE telefone = %s"
         cur.execute(query, (cellphone,))
         clients = cur.fetchone()
-        print(clients)
         if clients:
             return clients[0]
         else:
@@ -41,25 +40,32 @@ def add_encomenda(conn, situacao, data_encomenda, hora_encomenda, tipo, loja, cl
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
             (situacao, data_encomenda, hora_encomenda, tipo, loja, client_id, encomenda_id, data_criacao, hora_criacao))
         conn.commit()
-        return encomenda_id
+        return encomenda_id, data_criacao
 
-def add_item_to_encomenda(conn, encomenda_id, product_id, quantity, valor_item, valor_item_total):
+def add_item_to_encomenda(conn, encomenda_id, product_id, quantity, valor_item, valor_item_total, date):
     with conn.cursor() as cur:
-        data_criacao = datetime.now().date()
-        cur.execute("SELECT data_criacao, hora_criacao FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data_criacao))
-        data_hora_criacao = cur.fetchone()
-        cur.execute("INSERT INTO itens_encomenda (id_encomenda, id_produtos, quantidade, valor_item_total, valor_item, data_criacao, hora_criacao) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (encomenda_id, product_id, quantity,
-                     valor_item_total, valor_item, data_hora_criacao[0], data_hora_criacao[1]))
-        conn.commit()
+        if date:
+            print("awd")
+            cur.execute("SELECT data_criacao, hora_criacao FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, date))
+            data_hora_criacao = cur.fetchone()
+            cur.execute("INSERT INTO itens_encomenda (id_encomenda, id_produtos, quantidade, valor_item_total, valor_item, data_criacao, hora_criacao) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (encomenda_id, product_id, quantity,
+                        valor_item_total, valor_item, data_hora_criacao[0], data_hora_criacao[1]))
+            conn.commit()
+        else:
+            data_criacao = datetime.now().date()
+            cur.execute("SELECT data_criacao, hora_criacao FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data_criacao))
+            data_hora_criacao = cur.fetchone()
+            cur.execute("INSERT INTO itens_encomenda (id_encomenda, id_produtos, quantidade, valor_item_total, valor_item, data_criacao, hora_criacao) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (encomenda_id, product_id, quantity,
+                        valor_item_total, valor_item, data_hora_criacao[0], data_hora_criacao[1]))
+            conn.commit()
 
-def fetch_encomenda(conn, encomenda_id):
+def fetch_encomenda(conn, encomenda_id, parsed_date):
     with conn.cursor() as cur:
-        data = datetime.now().date()
-        cur.execute("SELECT * FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, data))
+        cur.execute("SELECT * FROM encomenda WHERE encomenda_id = %s AND data_criacao = %s", (encomenda_id, parsed_date))
         return cur.fetchone()
 
-'''
 def fetch_observacao(conn, id_itens_encomenda, item_id):
     with conn.cursor() as cur:
         cur.execute("""
@@ -74,15 +80,13 @@ def fetch_observacao(conn, id_itens_encomenda, item_id):
             return result[0]
         else:
             return None
-'''
 
 def fetch_products(conn, conn_vr, itens_data):
     products = {}
     with conn_vr.cursor() as cur_vr:
         for item in itens_data:
             itens_encomenda_id, item_id, quantity = item[0], item[2], item[3]
-            #observacao = (fetch_observacao(conn, itens_encomenda_id, item_id) or None)
-            observacao = None
+            observacao = (fetch_observacao(conn, itens_encomenda_id, item_id) or None)
             preco = fetch_product_price(cur_vr, item_id)
             product_info = fetch_product_info(cur_vr, item_id)
 
@@ -117,12 +121,18 @@ def fetch_product_info(cur_vr, item_id):
 def fetch_cliente(conn, client_id):
     with conn.cursor() as cur:
         cur.execute("SELECT * FROM cliente WHERE id = %s", (client_id,))
-        return cur.fetchone()
+        dados = cur.fetchone()
+        cur.execute("SELECT telefone FROM telefone WHERE cliente_id = %s", (client_id,))
+        telefone = cur.fetchall()
+        results = {
+            'dados': dados,
+            'telefone': telefone
+        }
+        return results
 
-def fetch_itens_encomenda(conn, encomenda_id):
+def fetch_itens_encomenda(conn, encomenda_id, parsed_date):
     with conn.cursor() as cur:
-        data = datetime.now().date()
-        cur.execute("SELECT * FROM itens_encomenda WHERE id_encomenda = %s AND data_criacao = %s", (encomenda_id, data))
+        cur.execute("SELECT * FROM itens_encomenda WHERE id_encomenda = %s AND data_criacao = %s", (encomenda_id, parsed_date))
         return (cur.fetchall() or [])
 
 def calculate_totals(products, encomenda_data):
@@ -132,26 +142,27 @@ def calculate_totals(products, encomenda_data):
     total = subtotal + valor_entrega - desconto
     return subtotal, valor_entrega, desconto, total
 
-def update_encomenda(conn, encomenda_id, subtotal):
+def update_encomenda(conn, encomenda_id, subtotal, parsed_date):
     with conn.cursor() as cur:
         cur.execute("""
             UPDATE encomenda 
             SET subtotal = %s
             WHERE encomenda_id = %s
-        """, (subtotal, encomenda_id))
+            AND data_criacao = %s
+        """, (subtotal, encomenda_id, parsed_date))
         conn.commit()
 
-def fetch_encomenda_data(conn, conn_vr, encomenda_id):
+def fetch_encomenda_data(conn, conn_vr, encomenda_id, parsed_date):
     context = initialize_context()
-    encomenda_data = fetch_encomenda(conn, encomenda_id)
+    encomenda_data = fetch_encomenda(conn, encomenda_id, parsed_date)
     if encomenda_data:
-        itens_data = fetch_itens_encomenda(conn, encomenda_id)
+        itens_data = fetch_itens_encomenda(conn, encomenda_id, parsed_date)
         products = fetch_products(conn, conn_vr, itens_data)
         cliente_data = fetch_cliente(conn, encomenda_data[6])
 
         subtotal, valor_entrega, desconto, total = calculate_totals(products, encomenda_data)
 
-        update_encomenda(conn, encomenda_id, subtotal)
+        update_encomenda(conn, encomenda_id, subtotal, parsed_date)
 
         context.update({
             'encomenda': encomenda_data,
@@ -197,13 +208,14 @@ def handle_product_id(conn, product_id, encomenda_id):
             flash('Product ID not found.', 'error')
             session.pop('product_id', None)
 
-def handle_product_addition(conn_vr, conn, encomenda_id):
+def handle_product_addition(conn_vr, conn, date, encomenda_id):
     if encomenda_id:
         product_id = request.form.get('product_id', '')
         quantity = request.form.get('quantity', '')
 
         if product_id and not quantity:
             session['encomenda_id'] = encomenda_id
+            session['date'] = date
             session['product_id'] = int(product_id)
             handle_product_id(conn_vr, product_id, encomenda_id)
 
@@ -211,33 +223,33 @@ def handle_product_addition(conn_vr, conn, encomenda_id):
             try:
                 valor_item = fetch_product_price(conn_vr.cursor(), session['product_id'])
                 valor_item_total = valor_item * Decimal(quantity)
-                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total)
+                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total, date)
                 session.pop('product_id', None)
                 flash('Product added successfully.', 'success')
             except Exception as e:
                 flash(f'Error adding product: {e}', 'error')
 
-def handle_post_requests(conn, conn_vr, encomenda_id):
+def handle_post_requests(conn, conn_vr, date, encomenda_id):
     if 'cellphone' in request.form:
         return handle_cellphone_request(conn, encomenda_id)
     if 'finalizar' in request.form:
         return handle_finalize_request(encomenda_id)
     if session.get('finalizar', False):
         return handle_finalization(conn, conn_vr, encomenda_id)
-    handle_product_addition(conn_vr, conn, encomenda_id)
+    handle_product_addition(conn_vr, conn, date, encomenda_id)
     return False
 
 def handle_cellphone_request(conn, encomenda_id):
     cellphone = request.form.get('cellphone')
-    print(cellphone)
     try:
         client_id = get_client(conn, cellphone)
     except ValueError as e:
         flash(str(e), 'error')
         return False
 
-    encomenda_id = create_encomenda(conn, client_id)
+    encomenda_id, date = create_encomenda(conn, client_id)
     session['encomenda_id'] = encomenda_id
+    session['date'] = date
     return True
 
 def create_encomenda(conn, client_id):
@@ -317,21 +329,28 @@ def update_item_observacao(conn, itens_encomenda_id, id_produto, nova_observacao
         conn.commit()
 
 @encomenda_bp.route('/encomenda', methods=['GET', 'POST'])
-@encomenda_bp.route('/encomenda/<int:encomenda_id>', methods=['GET', 'POST'])
+@encomenda_bp.route('/encomenda/<string:date>/<int:encomenda_id>', methods=['GET', 'POST'])
 @login_required
-def encomenda(encomenda_id=None):
+def encomenda(date=None, encomenda_id=None):
     conn = get_db_connection()
     conn_vr = get_db_vr()
     context = initialize_context()
-    session['encomenda_id'] = encomenda_id
-
     try:
-        if request.method == 'POST':
-            if handle_post_requests(conn, conn_vr, encomenda_id):
-                return redirect(url_for('encomenda_bp.encomenda', encomenda_id=session['encomenda_id']))
+        if date:
+            try:
+                parsed_date = datetime.strptime(date, '%Y-%m-%d').date()
+            except Exception as e:
+                flash('Invalid date format.', 'error')
+                return redirect(url_for('encomenda_bp.encomenda'))
 
+        session['encomenda_id'] = encomenda_id
+        session['date'] = date
+
+        if request.method == 'POST':
+            if handle_post_requests(conn, conn_vr, date, encomenda_id):
+                return redirect(url_for('encomenda_bp.encomenda', encomenda_id=session['encomenda_id']))
         if encomenda_id:
-            context.update(fetch_encomenda_data(conn, conn_vr, encomenda_id))
+            context.update(fetch_encomenda_data(conn, conn_vr, encomenda_id, parsed_date))
     except Exception as e:
         flash(f'An error occurred: {e}', 'error')
     finally:
@@ -350,7 +369,6 @@ def update_observacao():
         id_produto = data.get('id_produto')
         nova_observacao = data.get('nova_observacao')
 
-        print(itens_encomenda_id, id_produto, nova_observacao)
         if itens_encomenda_id and id_produto and nova_observacao:
             update_item_observacao(conn, itens_encomenda_id, id_produto, nova_observacao)
             flash('Observation updated successfully.', 'success')
@@ -371,12 +389,39 @@ def delete_observacao():
     itens_encomenda_id = data.get('itens_encomenda_id')
     id_produto = data.get('id_produto')
     delete_observation_from_db(itens_encomenda_id, id_produto)
+    return jsonify({"message": "Observation deleted successfully."}), 200
 
 def delete_observation_from_db(itens_encomenda_id, id_produto):
-    # Example SQL to delete the observation
+    conn = get_db_connection()
     with conn.cursor() as cur:
         cur.execute("""
             DELETE FROM observacao
             WHERE id_itens_encomenda = %s AND id_item_produto = %s
         """, (itens_encomenda_id, id_produto))
-    conn.commit()  # Commit the changes to the database
+    conn.commit()
+
+@encomenda_bp.route('/delete_item', methods=['POST'])
+@login_required
+def delete_item():
+    data = request.json  # Get the JSON data from the request
+
+    itens_encomenda_id = data.get('itens_encomenda_id')
+    id_produto = data.get('id_produto')
+    date = data.get('date')
+
+    if not itens_encomenda_id or not id_produto or not date:
+        return jsonify({"error": "Missing data"}), 400
+
+    # Perform the deletion from the database
+    delete_item_from_db(itens_encomenda_id, id_produto, date)
+
+    return jsonify({"message": "Item deleted successfully."}), 200
+
+def delete_item_from_db(itens_encomenda_id, id_produto, date):
+    conn = get_db_connection()
+    with conn.cursor() as cur:
+        cur.execute("""
+            DELETE FROM itens_encomenda
+            WHERE id = %s AND id_produtos = %s AND data_criacao = %s
+        """, (itens_encomenda_id, id_produto, date))
+    conn.commit()

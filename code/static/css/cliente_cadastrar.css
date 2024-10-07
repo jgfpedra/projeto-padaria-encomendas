@@ -1,86 +1,102 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
+    background-color: #f0f0f0;
 }
 
 .button-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    margin: 10px 0;
 }
 
-.button-container button {
-    padding: 5px 15px;
+.button-container button,
+.button-container input[type="submit"] {
+    padding: 10px 15px;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover,
+.button-container input[type="submit"]:hover {
+    background-color: #0056b3;
 }
 
 .form-container {
     display: flex;
-    flex-direction: column; /* Ensure form container stacks its children vertically */
-    background-color: #f7f3ed;
-    padding: 15px;
-    border: 1px solid #000;
-    max-width: 1200px; /* Optional: to limit the width of the form */
-    margin: 20px auto; /* Center container and add margin */
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    max-width: 1200px;
+    margin: 20px auto;
     border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-fields-container {
+    display: flex;
+    gap: 20px;
+}
+
+.form-fields-left {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    flex: 1;
+    gap: 20px; /* Space between columns */
 }
 
 .form-fields {
     display: flex;
-    flex-wrap: wrap; /* Allow items to wrap if necessary */
-    gap: 20px; /* Space between form fields */
-    margin-bottom: 20px;
-}
-
-.form-fields > div {
-    display: flex;
-    flex-direction: column; /* Stack label and input vertically */
-    gap: 5px;
-    flex: 1; /* Allow fields to take up available space */
+    flex-direction: column;
 }
 
 .form-fields label {
-    margin: 0; /* Remove default margin */
+    margin: 0;
+    font-weight: bold;
 }
 
 .form-fields input {
-    padding: 8px;
-    width: 100%; /* Ensure inputs take full width of their container */
+    padding: 10px;
+    width: 200%;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
 .phone-container {
     display: flex;
     flex-direction: column;
-    width: 35%;
-}
-
-.phone-container label {
-    margin-bottom: 5px;
-}
-
-.phone-container textarea {
-    resize: none;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-.phone-container .button-container {
-    display: flex;
-    gap: 10px;
+    width: 300px; /* Ensure a fixed width */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
 }
 
 .phone-row {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 10px;
+}
+
+.phone-row label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.phone-row input {
+    padding: 10px;
+    width: 100%; /* Limit width to the container */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 input.error {
     border-color: red;
-}
-
-input.error:focus {
-    outline-color: red;
 }

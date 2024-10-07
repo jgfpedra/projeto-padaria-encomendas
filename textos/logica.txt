@@ -1,28 +1,10 @@
 Problema BD:
 
-1 encomenda para N produtos
-  --> Como relacionar isso a quantidade do produto em si
 -----------------------------------------------------
 
-logica:
+Problema logica:
 
-operador faz login no sistema
-  ---> bd acessa o usuarios do vr_bkp
-operador vai a aba encomendas
-operador vai a sub-aba lancamento
-operador digita telefone cadastrado do cliente
-  ---> bd acessa a aba cliente
-operador digita id produtos e sua quantidade
-  --> ficar no cache (talvez?) --> colocar em uma estrutura de dados
-    --> se nao, colocar no bd
-operador finaliza o pedido
-  --> bd acessa a tabela encomenda e adiciona o pedido
-  --> bd adiciona ao vr_bkp o novo pedido --> integracao com PDV
-o pedido eh impresso em uma das impressoras
-  --> acessa a table encomenda e completa os dados da impressora
-o pedido fica no sistema para ser aberto pelo VRPDV
-  --> cadastrado como uma das encomendas do VRFood
-
-algo para relacionar depois da finalizacao
---> manda as informacoes --> fazer uma configuracao do arquivo que ira ser enviado
-
+- encomenda.py
+  --> adicao da encomenda apos colocar o telefone do cliente
+- vrfood
+  --> adicao da encomenda apos colocar o primeiro item

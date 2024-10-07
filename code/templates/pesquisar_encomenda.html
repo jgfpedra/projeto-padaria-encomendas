@@ -10,7 +10,7 @@
     <div class="button-container">
       <button onclick="window.location.href='{{ url_for('encomenda_bp.encomenda') }}'">Incluir</button>
       <button type="button">Imprimir</button>
-      <button type="button">Carregar</button>
+      <button type="button" onclick="loadSelected()">Carregar</button>
     </div>
     <div class="button-container">
       <form method="POST" action="{{ url_for('pesquisar_encomenda_bp.pesquisar_encomenda') }}" class="input-container">
