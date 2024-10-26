@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Flask App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/impressora_configurar_popup.js') }}" defer></script>
+    <link rel="icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Cadastrar</a>
+                  <div class="dropdown-content">
+                      <a href="{{ url_for('pesquisar_cliente_bp.pesquisar_cliente') }}">Cliente</a>
+                      <a href="{{ url_for('pesquisar_impressora_bp.pesquisar_impressora') }}">Impressora</a>
+                  </div>
+                </li>  
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Encomendas</a>
+                  <div class="dropdown-content">
+                      <a href="{{ url_for('encomenda_bp.encomenda') }}">Lancamento</a>
+                      <a href="{{ url_for('pesquisar_encomenda_bp.pesquisar_encomenda') }}">Pesquisar</a>
+                  </div>
+                </li>  
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Configurar</a>
+                  <div class="dropdown-content">
+                      <div class="popup-container-impressora">
+                        <a onclick="showPopupConfigurar()">Impressora</a>
+                      </div>
+                      <div id="popup-container-impressora"></div>
+                  </div>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Login</a>
+                  <div class="dropdown-content">
+                    <a>Change</>
+                    <a href="{{ url_for('login_bp.logout') }}">Log Out</a>
+                  </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Page-specific content will go here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pao do Cambui</p>
+    </footer>
+
+    <script>
+        $(document).ready(function(){
+            $('.dropbtn').click(function(){
+                $('.dropdown-content').toggle();
+            });
+        });
+    </script>
+</body>
+</html>

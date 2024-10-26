@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Pesquisar Encomenda{% endblock %}
+
+{% block content %}
+    <head>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_encomenda.css') }}">
+      <script src="{{ url_for('static', filename='js/pesquisar_encomenda.js') }}"></script>
+    </head>
+    <div class="button-container">
+      <button onclick="window.location.href='{{ url_for('encomenda_bp.encomenda') }}'">Incluir</button>
+      <button type="button">Imprimir</button>
+      <button type="button" onclick="loadSelected()">Carregar</button>
+    </div>
+    <div class="button-container">
+      <form method="POST" action="{{ url_for('pesquisar_encomenda_bp.pesquisar_encomenda') }}" class="input-container">
+        <label>Código <input type="text" name="encomenda_id"></label>
+        <label>Tipo Encomenda
+            <select name="tipo">
+                <option value="">Selecione</option>
+                <option value="Retirada">Retirada</option>
+                <option value="Entrega">Entrega</option>
+            </select>
+        </label>
+        <label>Período Criação 
+            <input type="text" name="data_inicial_criacao" placeholder="Data Inicial (YYYY-MM-DD)">
+            <input type="text" name="data_final_criacao" placeholder="Data Final (YYYY-MM-DD)">
+        </label>
+        <label>Período Encomenda
+            <input type="text" name="data_inicial_encomenda" placeholder="Data Inicial (YYYY-MM-DD)">
+            <input type="text" name="data_final_encomenda" placeholder="Data Final (YYYY-MM-DD)">
+        </label>
+        <label>Cliente ID<input type="text" name="cliente_id"></label>
+        <label>Nome Cliente<input type="text" name="nome_cliente"></label>
+        <label>Valor Total<input type="text" name="total" placeholder="0.00"></label>
+        <label>Telefone<input type="text" name="telefone"></label>
+        <label>Situação
+            <select name="situacao">
+                <option value="">Selecione</option>
+                <option value="Digitando">Digitando</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Importado">Importado</option>
+            </select>
+        </label>
+        <button type="submit">Pesquisar</button>
+      </form>
+    </div>
+    <div class="table-container">
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Código</th>
+                    <th>Tipo</th>
+                    <th>Situação</th>
+                    <th>Data Criação</th>
+                    <th>Data Encomenda</th>
+                    <th>Cliente ID</th>
+                    <th>Nome Cliente</th>
+                    <th>Total</th>
+                    <th>Telefone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if encomendas %}
+                    {% for encomenda in encomendas %}
+                        <tr>
+                            <td><input type="radio" name="selected-encomenda" value="{{ encomenda[0] }}" class="encomenda-radio"></td>
+                            <td>{{ encomenda[0] }}</td>
+                            <td>{{ encomenda[1] }}</td>
+                            <td>{{ encomenda[2] }}</td>
+                            <td>{{ encomenda[3] }}</td>
+                            <td>{{ encomenda[4] }}</td>
+                            <td>{{ encomenda[5] }}</td>
+                            <td>{{ encomenda[6] }}</td>
+                            <td>{{ encomenda[7] }}</td>
+                            <td>{{ encomenda[8] }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="10">Nenhuma encomenda encontrada.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

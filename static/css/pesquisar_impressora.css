@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between items */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.input-container label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 10px; /* Space between label and input */
+    flex: 1 1 150px; /* Allow flexibility and set a minimum width */
+}
+
+.input-container input {
+    padding: 5px;
+    width: 100%; /* Make inputs responsive */
+    max-width: 200px; /* Optional max width */
+    gap: 10px;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.results-table, .results-table th, .results-table td {
+    border: 1px solid black;
+}
+
+.results-table th, .results-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #f2f2f2;
+}

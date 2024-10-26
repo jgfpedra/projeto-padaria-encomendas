@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/impressora_cadastrar.css') }}">
+    <script src="{{ url_for('static', filename='js/salvar_impressora_cadastrar.js') }}" defer></script>
+  </head>
+  
+    <!-- Ensure the form has an action and method -->
+  <form action="/impressora_cadastrar" method="POST" id="meuForm">
+    <input type="hidden" name="form_action" value="submit"> <!-- Hidden field -->
+    <div class="button-container">
+        <input type="submit" value="Salvar">
+        <button type="button" onclick="loadPopupSalvar()">Sair</button>
+        <div id="popup-container-salvar"></div>
+    </div>
+
+    <!-- Client registration form section -->
+    <div class="form-container">
+        <div class="form-fields">
+            <label>ID:
+              {% if impressora['id'] %}
+                <input type="text" name="id" value="{{ impressora['id'] }}" readonly>
+              {% else %}
+                <input type="text" name="id" value="{{ next_codigo }}" readonly>
+              {% endif %}
+            </label>
+            <label for="loja">Loja:</label>
+            <select name="loja" id="loja" required>
+                <option value="2" {% if impressora['loja'] == 'Pão da Primavera' %}selected{% endif %}>Pão da Primavera</option>
+                <option value="1" {% if impressora['loja'] == 'Pão do Cambuí' %}selected{% endif %}>Pão do Cambuí</option>
+            </select>
+            <label>Descricao:
+                <input type="text" name="descricao" value="{{ impressora['descricao'] }}" required>
+            </label>
+            <label>Endereco:
+                <input type="text" name="endereco" value="{{ impressora['endereco'] }}" required>
+            </label>
+            <label for="tipo_impressao">Tipo Impressora:</label>
+            <select name="tipo_impressao" id="tipo_impressao" required>
+                <option value="REDE" {% if impressora['tipo_impressao'] == 'REDE' %}selected{% endif %}>REDE</option>
+                <option value="LOCAL" {% if impressora['tipo_impressao'] == 'LOCAL' %}selected{% endif %}>LOCAL</option>
+            </select>
+            <label for="modelo_impressora">Modelo Impressora:</label>
+            <select name="modelo_impressora" id="modelo_impressora" required>
+                <option value="BEMATECH" {% if impressora['modelo_impressora'] == 'BEMATECH' %}selected{% endif %}>BEMATECH</option>
+                <option value="EPSON" {% if impressora['modelo_impressora'] == 'EPSON' %}selected{% endif %}>EPSON</option>
+            </select>
+            <label for="porta">Porta:</label>
+            <input type="number" name="porta" id="porta" value="{{ impressora['porta'] }}" min="0" max="65535" pattern="^[0-9]{1,5}$" required>
+            <label for="utiliza_guilhotina">Utiliza Guilhotina:</label>
+            <select name="utiliza_guilhotina" id="utiliza_guilhotina">
+                <option value="True" {% if impressora['utiliza_guilhotina'] == 'True' %}selected{% endif %}>True</option>
+                <option value="False" {% if impressora['utiliza_guilhotina'] == 'False' %}selected{% endif %}>False</option>
+            </select>
+        </div>
+    </div>
+    <div class="button-container">
+      <input type="submit" value="Salvar"></input>
+      <button type="button" onclick="loadPopupSalvar()">Sair</button>
+    </div>
+  </form>
+{% endblock %}

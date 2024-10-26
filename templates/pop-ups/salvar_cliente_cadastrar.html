@@ -1,0 +1,49 @@
+<!-- salvar_cliente_cadastrar.html -->
+<div id="popup-container-salvar-display" style="display: none;">
+	<div class="popup-container-salvar">
+	    <span class="close-button-salvar" onclick="closePopup()">×</span>
+	    <h2>Confirmar ação</h2>
+	    <p>Deseja salvar as alterações ou cancelar?</p>
+	    <div class="popup-buttons-salvar">
+        <button id="saveButton">Salvar</button>
+        <button id="cancelButton">Cancelar</button>
+      </div>
+	</div>
+</div>
+
+<style>
+	#popup-container-salvar-display {
+	    display: none; /* initially hidden */
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    background: rgba(0, 0, 0, 0.5);
+	    justify-content: center;
+	    align-items: center;
+	    z-index: 1000; /* Ensure it's above other content */
+	}
+
+    .popup-container-salvar {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .close-button-salvar {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .popup-buttons-salvar {
+        margin-top: 20px;
+    }
+
+    .popup-buttons-salvar button {
+        margin-right: 10px;
+    }
+</style>

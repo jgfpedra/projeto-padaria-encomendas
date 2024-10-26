@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container button {
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.button-container a{
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column; /* Ensure form container stacks its children vertically */
+    background-color: #f7f3ed;
+    padding: 15px;
+    border: 1px solid #000;
+    max-width: 1200px; /* Optional: to limit the width of the form */
+    margin: 20px auto; /* Center container and add margin */
+    border-radius: 8px;
+}
+
+.form-fields {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap if necessary */
+    gap: 20px; /* Space between form fields */
+    margin-bottom: 20px;
+}
+
+.form-fields > div {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+    gap: 5px;
+    flex: 1; /* Allow fields to take up available space */
+}
+
+.form-fields label {
+    margin: 0; /* Remove default margin */
+}
+
+.form-fields input {
+    padding: 8px;
+    width: 100%; /* Ensure inputs take full width of their container */
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
