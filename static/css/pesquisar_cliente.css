@@ -1,6 +1,8 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
+    background-color: #D8D5DB; /* Silver background color */
+    color: #5A4B3A; /* Darkest color for text */
 }
 
 .button-container {
@@ -9,55 +11,165 @@ body {
     margin-bottom: 10px;
 }
 
-.button-container button {
-    padding: 5px 15px;
+.icon-button {
+    background-color: #E8A257; /* Sandy Brown color for buttons */
+    color: #5A4B3A; /* Darkest color for text in buttons */
+    border: none;
+    padding: 10px 15px;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    position: relative;
+    transition: background-color 0.3s ease;
 }
 
+.icon-button:hover {
+    background-color: #B5ACAD; /* Light greyish brown on hover */
+}
+
+.tooltip {
+    visibility: hidden; /* Hide tooltip by default */
+    width: auto;
+    max-width: 100px;
+    background-color: #555; /* Tooltip background color */
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    left: 100%;
+    top: 50%;
+    transform: translateX(0) translateY(50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    font-size: 12px;
+}
+
+.icon-button:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.table-container,
 .input-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between items */
-    margin-bottom: 10px;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
     padding: 10px;
-    border: 1px solid #000;
+    border: none;
+    background-color: #EAE8FF; /* Light lavender background for the input container */
+}
+
+.input-container{
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1); /* Keep the shadow effect */
+    background-color: #EAE8FF; /* Light lavender background for the input container */
 }
 
 .input-container label {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-right: 10px; /* Space between label and input */
-    flex: 1 1 150px; /* Allow flexibility and set a minimum width */
+    color: #5A4B3A; /* Darkest color for label text */
 }
 
 .input-container input {
     padding: 5px;
-    width: 100%; /* Make inputs responsive */
-    max-width: 200px; /* Optional max width */
+    width: 100%;
+    max-width: 150px;
+    border: none; /* Remove border from input */
+    background-color: #F9F9F9; /* Light background for inputs */
+    color: #5A4B3A; /* Dark text color inside inputs */
+    font-size: 14px;
+}
+
+.input-container input:focus {
+    outline: none; /* Remove outline on focus */
+}
+
+.search-form {
+    display: flex;
     gap: 10px;
+    align-items: center;
 }
 
 .table-container {
-    overflow-x: auto;
-    width: 100%;
-    margin-top: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Keep the shadow effect */
+    background-color: #EAE8FF; /* Light lavender background for the table container */
 }
 
 .results-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #EAE8FF; /* Light lavender background for the table */
 }
 
-.results-table, .results-table th, .results-table td {
-    border: 1px solid black;
+.results-table .client-row {
+    cursor: pointer;
 }
 
-.results-table th, .results-table td {
-    padding: 8px;
+.results-table,
+.results-table th,
+.results-table td {
+    border: none; /* Remove borders from table */
+}
+
+.results-table th,
+.results-table td {
+    padding: 11px;
     text-align: left;
+    color: #5A4B3A; /* Dark text color for table content */
 }
 
 .results-table th {
-    background-color: #f2f2f2;
+    background-color: #EAE8FF; /* Same color as the rest of the layout */
+}
+
+/* Table Row Hover Effect */
+.results-table tr {
+    position: relative; /* Ensure relative positioning for the row */
+}
+
+/* Hide the select radio buttons by default */
+.results-table td input[type="radio"] {
+    visibility: hidden; /* Initially hide the radio buttons */
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s; /* Smooth fade-in effect */
+}
+
+/* Show radio button when hovering over the table row */
+.results-table tr:hover td input[type="radio"] {
+    visibility: visible; /* Make the radio button visible */
+    opacity: 1; /* Fade-in effect */
+}
+
+/* Additional styling for the hover effect (optional) */
+.results-table tr:hover {
+    background-color: #E8A257; /* Sandy Brown background on hover */
+}
+
+/* Style for the selected row (when radio button is checked) */
+.results-table tr.selected {
+    background-color: #B5ACAD; /* Lighter silver for selected row */
+}
+
+.results-table td input[type="radio"]:hover {
+    background-color: #B5ACAD; /* Light brown color when hovering over radio button */
+}
+
+.results-table tr.selected td {
+    color: #fff; /* White text color when selected */
+}
+
+.telefone-container {
+    max-width: 150px;
+    overflow-x: auto;
+    white-space: nowrap;
+    display: block;
+    padding-bottom: 5px;
+}
+
+.telefone-container span {
+    display: inline-block;
 }

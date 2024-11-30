@@ -1,13 +1,15 @@
+/*cliente_cadastrar.css*/
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: #D8D5DB; /* Darker grey background */
 }
 
 .button-container {
-    display: flex;
-    gap: 10px;
-    margin: 10px 0;
+    display: flex; /* Use flexbox */
+    justify-content: flex-start; /* Align items to the start */
+    gap: 10px; /* Space between buttons */
+    margin-top: auto; /* Margin at the top */
 }
 
 .button-container button,
@@ -16,22 +18,44 @@ body {
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #E8A257; /* SandyBrown */
     color: white;
     transition: background-color 0.3s;
 }
 
 .button-container button:hover,
 .button-container input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #CD853F; /* Darker SandyBrown on hover */
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the button */
+    left: 50%;
+    margin-left: -60px; /* Center the tooltip */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1; /* Show the tooltip on hover */
 }
 
 .form-container {
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
+    background-color: #B5ACAD; /* Darker grey */
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #B5ACAD; /* Border color */
     max-width: 1200px;
     margin: 20px auto;
     border-radius: 8px;
@@ -39,43 +63,60 @@ body {
 }
 
 .form-fields-container {
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 20px; /* Space between the two columns */
 }
 
 .form-fields-left {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    flex: 1;
-    gap: 20px; /* Space between columns */
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #B5ACAD; /* Border color */
+    border-radius: 4px;
 }
 
 .form-fields {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns for the form fields */
+    gap: 20px; /* Space between form fields */
 }
 
 .form-fields label {
-    margin: 0;
+    margin-bottom: 10px; /* Space between labels */
     font-weight: bold;
+    color: #5A4B3A; /* Darker text color */
 }
 
 .form-fields input {
     padding: 10px;
-    width: 200%;
+    width: 100%; /* Ensure inputs take full width */
     box-sizing: border-box;
+    background-color: #EAE8FF; /* Light purple background for inputs */
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-bottom: 10px; /* Space between input fields */
+}
+
+.right-side-container {
+    display: flex;
+    flex-direction: column; /* Stack phone container and buttons vertically */
+    justify-content: space-between; /* Space between the phone container and buttons */
+    height: 90%; /* Allow it to take full height */
+    margin-top: 10px;
 }
 
 .phone-container {
     display: flex;
     flex-direction: column;
-    width: 300px; /* Ensure a fixed width */
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #B5ACAD; /* Border color */
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #B5ACAD; /* Keep this for clarity */
+    max-height: 300px; /* Set max height if necessary */
+    overflow-y: auto; /* Enable scrolling if needed */
+    flex-grow: 1; /* Allow the phone container to grow and fill available space */
 }
 
 .phone-row {
@@ -87,16 +128,18 @@ body {
 .phone-row label {
     margin-bottom: 5px;
     font-weight: bold;
+    color: #5A4B3A; /* Darker text color */
 }
 
 .phone-row input {
     padding: 10px;
     width: 100%; /* Limit width to the container */
     box-sizing: border-box;
+    background-color: #EAE8FF; /* Light purple background for inputs */
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
 input.error {
-    border-color: red;
+    border-color: red; /* Error state */
 }

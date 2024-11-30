@@ -1,7 +1,8 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #f4f4f4; /* Light gray background */
+    background-color: #D8D5DB; /* Fundo da página com a cor #D8D5DB */
+    color: #5A4B3A; /* Cor do texto #5A4B3A */
 }
 
 /* Button container styles */
@@ -14,6 +15,15 @@ body {
 .button-container button {
     padding: 5px 15px;
     cursor: pointer;
+    background-color: #E8A257; /* Botões com a cor #E8A257 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover {
+    background-color: #CD853F; /* Hover em botões com a cor mais escura */
 }
 
 /* Style for the main grid container */
@@ -21,24 +31,25 @@ body {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
-    background-color: #f9f9f9; /* Light gray background for the whole grid */
-    padding: 20px; /* Add some padding around the grid */
+    background-color: #EAE8FF; /* Cor de fundo clara para a área principal */
+    padding: 20px;
 }
 
+/* Info grid container */
 .info-grid {
     display: grid;
     grid-template-rows: repeat(3, auto);
     gap: 20px;
-    background-color: #f9f9f9;
+    background-color: #EAE8FF; /* Fundo do grid de informações com #EAE8FF */
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #D8D5DB; /* Bordas com a cor #D8D5DB */
 }
 
 /* Order info and product info */
 .order-info, .product-info {
     padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
+    border: 1px solid #B5ACAD; /* Bordas dos painéis de informações com #B5ACAD */
+    background-color: #FFF; /* Fundo branco para se destacar */
 }
 
 h3 {
@@ -52,13 +63,14 @@ h3 {
     margin-bottom: 5px;
 }
 
+/* Table styles */
 .product-info table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .product-info th, .product-info td {
-    border: 1px solid #ccc;
+    border: 1px solid #B5ACAD; /* Bordas da tabela com #B5ACAD */
     padding: 8px;
     text-align: left;
 }
@@ -69,17 +81,17 @@ h3 {
     grid-template-rows: auto auto;
     gap: 15px;
     padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
+    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
+    background-color: #EAE8FF; /* Cor de fundo #EAE8FF */
 }
 
 /* Form styles */
 .order-form {
-    background-color: #f9f9f9;
+    background-color: #EAE8FF; /* Fundo claro para o formulário */
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
 }
 
 .order-form label {
@@ -93,54 +105,49 @@ h3 {
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin-right: 15px; /* Space between buttons */
+    margin-right: 15px; /* Espaço entre os botões */
 }
 
 .custom-radio input {
-    display: none; /* Hide the default radio button */
+    display: none; /* Esconde o botão de rádio padrão */
 }
 
 .radio-btn {
     padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
+    background-color: #EAE8FF; /* Cor de fundo clara */
+    border: 1px solid #B5ACAD; /* Bordas com a cor #B5ACAD */
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .custom-radio input:checked + .radio-btn {
-    background-color: #007bff; /* Active background color */
-    color: white; /* Text color for active state */
+    background-color: #E8A257; /* Cor de fundo quando o botão de rádio está ativo */
+    color: white; /* Texto branco quando ativo */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.custom-radio input:focus + .radio-btn {
-    outline: none; /* Remove default focus outline */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Outline for focus */
 }
 
 /* Delivery details */
 #entregaDetails {
     margin-top: 15px;
     padding: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #B5ACAD; /* Bordas com #B5ACAD */
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #FFF; /* Fundo branco para detalhes de entrega */
 }
 
 /* Style for table rows with hover effect */
 .product-info tr.selectable-row {
-    cursor: pointer; /* Indicates that the row is clickable */
+    cursor: pointer;
 }
 
 .product-info tr.selectable-row:hover {
-    background-color: #f1f1f1; /* Light gray background on hover */
+    background-color: #F1F1F1; /* Fundo mais claro ao passar o mouse */
 }
 
 /* Highlight for selected rows */
 .product-info tr.selectable-row.selected {
-    background-color: #e0e0e0; /* Highlight background for selected row */
+    background-color: #D8D5DB; /* Fundo destacado ao selecionar a linha */
 }
 
 /* Totals info */
@@ -151,43 +158,42 @@ h3 {
 
 /* Button grid styles */
 .button-grid {
-    grid-column: span 2; /* This makes the button-grid span across both columns of the main grid */
+    grid-column: span 2; /* O botão ocupa ambas as colunas do grid */
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    background-color: #EAE8FF; /* Cor de fundo do grid de botões */
+    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
     margin-top: 20px;
 }
 
 .button-grid button {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
+    background-color: #E8A257; /* Cor de fundo dos botões */
     color: white;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .button-grid button:hover {
-    background-color: #0056b3;
+    background-color: #CD853F; /* Cor mais escura ao passar o mouse */
 }
 
-/* Client and order info */
 .client-info, .order-info {
-    position: relative; /* Needed for the absolute positioning of the toggle button */
+    position: relative;
     padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    max-height: 200px; /* Adjust as needed for initial height */
-    overflow: hidden; /* Hides content that overflows */
+    border: 1px solid #B5ACAD; /* Bordas com #B5ACAD */
+    background-color: #FFF; /* Fundo branco */
+    max-height: 200px;
+    overflow: hidden;
     transition: max-height 0.3s ease;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; /* Space between labels */
+    gap: 10px;
 }
 
 .selectable-row.selected {
-    background-color: #f0f0f0; /* Highlight color */
+    background-color: #F1F1F1; /* Cor de fundo ao selecionar uma linha */
     transition: background-color 0.3s;
 }

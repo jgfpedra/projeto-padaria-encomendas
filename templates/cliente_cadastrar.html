@@ -1,29 +1,37 @@
-{% extends 'base.html' %}
+{% extends 'menu.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Cadastrar Cliente{% endblock %}
 
 {% block content %}
   <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cliente_cadastrar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="{{ url_for('static', filename='js/salvar_cliente_cadastrar.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/adicionar_telefone.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/cliente_cadastrar.js') }}" defer></script>
   </head>
   <div class="form-container">
-      <form action="/cliente_cadastrar" method="POST" id="meuForm">
+      <form id="meu_formulario">
           <input type="hidden" name="form_action" value="submit">
           <div class="button-container">
-              <button type="submit">
-                  <i class="fas fa-save"></i>
-              </button>
-              <button type="button" onclick="loadPopupSalvar()">
-                  <i class="fas fa-sign-out-alt"></i>
-              </button>
+              <div class="tooltip-container">
+                  <button type="button" onclick="submeter_formulario()">
+                      <i class="fas fa-save"></i>
+                  </button>
+                  <span class="tooltip">Salvar</span>
+              </div>
+              <div class="tooltip-container">
+                  <button type="button" onclick="carregar_popup_cancelar()">
+                      <i class="fas fa-sign-out-alt"></i>
+                  </button>
+                  <span class="tooltip">Sair</span>
+              </div>
           </div>
+          <div id="popup-cancelar-cliente"></div>
+          <div id="error-message" style="color: red; display: none; margin-top:10px"></div>
           <div class="form-fields-container">
               <div class="form-fields-left">
+                  <!-- Big rectangle container on the left for the input fields -->
                   <div class="form-fields">
-                      <label>ID:
+                      <label>Código:
                           {% if cliente['id'] %}
                               <input type="text" name="id" value="{{ cliente['id'] }}" readonly>
                           {% else %}
@@ -33,10 +41,10 @@
                       <label>Nome:
                           <input type="text" name="nome" value="{{ cliente['nome'] }}" required>
                       </label>
-                      <label>Endereco:
+                      <label>Endereço:
                           <input type="text" name="endereco" value="{{ cliente['endereco'] }}" required>
                       </label>
-                      <label>Numero:
+                      <label>Número:
                           <input type="text" name="numero" value="{{ cliente['numero'] }}" required>
                       </label>
                       <label>Bairro:
@@ -45,33 +53,36 @@
                       <label>Complemento:
                           <input type="text" name="complemento" value="{{ cliente['complemento'] }}" required>
                       </label>
-                      <label>Municipio:
-                          <input type="text" name="municipio" value="{{ cliente['municipio'] }}" required>
-                      </label>
-                      <label>Observacao:
+                      <label>Observação:
                           <input type="text" name="observacao" value="{{ cliente['observacao'] }}" required>
                       </label>
                   </div>
               </div>
-              <div class="phone-container" id="phone-container">
-                  <h3>Telefones</h3>
-                  {% if cliente.telefones %}
-                      {% for telefone in cliente.telefones %}
+
+              <!-- Right side: Two containers -->
+              <div class="right-side-container">
+                  <!-- Bigger container for the phone inputs -->
+                  <div class="phone-container" id="phone-container">
+                      {% if cliente.telefones %}
+                          {% for telefone in cliente.telefones %}
+                              <div class="phone-row">
+                                  <label for="phone-{{ loop.index }}">Telefone {{ loop.index }}:</label>
+                                  <input type="text" name="telefones" id="phone-{{ loop.index }}" value="{{ telefone }}" 
+                                      pattern="^\(\d{2}\)\d{8,9}$" title="Formato: (99)999999999 ou (99)99999999" 
+                                      oninput="formatCellphone(this)" maxlength="13" required>
+                              </div>
+                          {% endfor %}
+                      {% else %}
                           <div class="phone-row">
-                              <label for="phone-{{ loop.index }}">Telefone {{ loop.index }}:</label>
-                              <input type="text" name="telefones" id="phone-{{ loop.index }}" value="{{ telefone }}" 
-                                    pattern="^\(\d{2}\)\d{8,9}$" title="Format: (99)999999999 or (99)99999999" 
-                                    oninput="formatCellphone(this)" maxlength="13" required>
+                              <label for="phone-1">Telefone 1:</label>
+                              <input type="text" name="telefones" id="phone-1" placeholder="Digite o telefone" 
+                                  pattern="^\(\d{2}\)\d{8,9}$" title="Formato: (99)999999999 ou (99)99999999" 
+                                  oninput="formatCellphone(this)" maxlength="13" required>
                           </div>
-                      {% endfor %}
-                  {% else %}
-                      <div class="phone-row">
-                          <label for="phone-1">Telefone 1:</label>
-                          <input type="text" name="telefones" id="phone-1" placeholder="Digite o telefone" 
-                                pattern="^\(\d{2}\)\d{8,9}$" title="Format: (99)999999999 or (99)99999999" 
-                                oninput="formatCellphone(this)" maxlength="13" required>
-                      </div>
-                  {% endif %}
+                      {% endif %}
+                  </div>
+
+                  <!-- Smaller container for the buttons below the phone input fields -->
                   <div class="button-container">
                       <button type="button" onclick="addPhoneInput()">
                           <i class="fas fa-plus"></i> Adicionar

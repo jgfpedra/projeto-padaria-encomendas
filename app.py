@@ -5,6 +5,7 @@ import os
 import importlib.util
 from flask_cors import CORS
 from static.py.login_required import login_required
+from static.py.contexto import inject_user
 
 def load_secret_key(file_path):
     with open(file_path, 'r') as file:
@@ -43,8 +44,8 @@ def import_all_modules(directory):
 modules = import_all_modules(module_dir)
 
 # Assuming cliente is one of the imported modules
-cliente_cadastrar_bp = modules['cliente_cadastrar']
 login_bp = modules['login']
+cliente_cadastrar_bp = modules['cliente_cadastrar']
 pesquisar_cliente_bp = modules['pesquisar_cliente']
 impressora_cadastrar_bp = modules['impressora_cadastrar']
 pesquisar_impressora_bp = modules['pesquisar_impressora']
@@ -61,6 +62,8 @@ app.register_blueprint(encomenda_bp.encomenda_bp)
 app.register_blueprint(pesquisar_encomenda_bp.pesquisar_encomenda_bp)
 app.register_blueprint(impressora_configurar_bp.impressora_configurar_bp)
 
+app.context_processor(inject_user)
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(app.root_path + '/static/icons', 'favicon.ico')
@@ -74,12 +77,6 @@ def index():
 @login_required
 def impressora_configuracao():
     return render_template('impressora_configuracao.html')
-
-@app.route('/login_popup', methods=['POST'])
-@login_required
-def show_popup_login():
-    popup_html = render_template('pop-ups/login_popup.html')
-    return jsonify({'popup_html': popup_html})
 
 @app.route('/lancamento_finalizar_encomendas')
 @login_required
@@ -99,17 +96,17 @@ def show_popup_lancamento_salvar_encomendas():
     popup_html = render_template('pop-ups/lancamento_salvar_encomendas.html')
     return jsonify({'popup_html': popup_html})
 
-@app.route('/salvar_cliente_cadastrar')
+@app.route('/cancelar_cliente')
 @login_required
-def show_popup_salvar_cliente_cadastrar():
-    popup_html = render_template('pop-ups/salvar_cliente_cadastrar.html')
-    return jsonify({'popup_cliente_cadastrar_html': popup_html})
+def show_popup_cancelar_cliente():
+    popup_cancelar_cliente_html = render_template('pop-ups/pp_cancelar_cliente.html')
+    return jsonify({'popup_cancelar_cliente_html': popup_cancelar_cliente_html})
 
-@app.route('/salvar_impressora_cadastrar')
+@app.route('/cancelar_impressora')
 @login_required
-def show_popup_salvar_impressora_cadastrar():
-    popup_html = render_template('pop-ups/salvar_impressora_cadastrar.html')
-    return jsonify({'popup_html': popup_html})
+def show_popup_impressora_cancelar():
+    popup_cancelar_impressora_html = render_template('pop-ups/pp_cancelar_impressora.html')
+    return jsonify({'popup_cancelar_impressora_html': popup_cancelar_impressora_html})
 
 if __name__ == '__main__':
     app.run(host='code', port=5000, debug=True, ssl_context=('cert.pem', 'key.pem'))

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'menu.html' %}
 
 {% block title %}Encomenda{% endblock %}
 
@@ -15,9 +15,6 @@
         <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
             <button type="submit" name="incluir" value="true" class="btn btn-primary">Incluir</button>
         </form>
-        <!--
-          Fazer dependencia de qual o status da encomenda
-        -->
         {% if encomenda %}
           <form method="post" class="print-form" action="{{ url_for('encomenda_bp.imprimir_encomenda') }}">
             <input type="hidden" name="encomenda_id" id="print-encomenda-id">

@@ -1,57 +1,120 @@
+/*impressora_cadastrar.css*/
 body {
     font-family: Arial, sans-serif;
     margin: 0;
+    background-color: #D8D5DB; /* Silver background */
+    color: #5A4B3A; /* Brown text */
 }
 
+/* Container for the form */
+.form-wrapper {
+    background-color: #B5ACAD; /* Darker grey container for the form */
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 8px; /* Rounded corners */
+    position: relative; /* Needed for positioning buttons outside */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added box-shadow for form container */
+}
+
+/* Button container outside the form but at the same height */
 .button-container {
-    display: flex;
-    gap: 10px;
+    display: flex; /* Use flexbox */
+    justify-content: flex-start; /* Align items to the start */
+    gap: 10px; /* Space between buttons */
+    margin-top: auto; /* Margin at the top */
     margin-bottom: 10px;
 }
 
-.button-container button {
-    padding: 5px 15px;
+.button-container button,
+.button-container input[type="submit"] {
+    padding: 10px 15px;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #E8A257; /* SandyBrown */
+    color: white;
+    transition: background-color 0.3s;
 }
 
-.button-container a{
-    padding: 5px 15px;
+.button-container button:hover,
+.button-container input[type="submit"]:hover {
+    background-color: #CD853F; /* Darker SandyBrown on hover */
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the button */
+    left: 50%;
+    margin-left: -60px; /* Center the tooltip */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1; /* Show the tooltip on hover */
+}
+
+/* Styling for individual buttons */
+.icon-button {
+    background-color: #E8A257; /* Sandy Brown button */
+    color: #5A4B3A; /* Brown text on buttons */
+    border: none;
+    padding: 10px;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    display: inline-flex;
+    min-width: 30px; /* Ensure buttons are a little wider */
 }
 
-.form-container {
-    display: flex;
-    flex-direction: column; /* Ensure form container stacks its children vertically */
-    background-color: #f7f3ed;
-    padding: 15px;
-    border: 1px solid #000;
-    max-width: 1200px; /* Optional: to limit the width of the form */
-    margin: 20px auto; /* Center container and add margin */
-    border-radius: 8px;
+.icon-button i {
+    margin-right: 5px; /* Space between icon and text */
 }
 
-.form-fields {
+.icon-button:hover {
+    background-color: #B5ACAD; /* Slightly darker hover color */
+}
+
+.icon-button:hover .tooltip {
+    visibility: visible;
+    opacity: 1; /* Show the tooltip */
+}
+
+/* Container for form blocks */
+.form-block {
     display: flex;
-    flex-wrap: wrap; /* Allow items to wrap if necessary */
-    gap: 20px; /* Space between form fields */
+    gap: 20px;
     margin-bottom: 20px;
+    justify-content: space-between;
 }
 
-.form-fields > div {
+.form-field {
+    flex: 1; /* Distribute space equally */
     display: flex;
-    flex-direction: column; /* Stack label and input vertically */
+    flex-direction: column;
     gap: 5px;
-    flex: 1; /* Allow fields to take up available space */
 }
 
-.form-fields label {
-    margin: 0; /* Remove default margin */
-}
-
-.form-fields input {
+input, select {
     padding: 8px;
     width: 100%; /* Ensure inputs take full width of their container */
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 4px;
+    background-color: #EAE8FF; /* Brightest color in palette for inputs */
+}
+
+label {
+    color: #5A4B3A; /* Brown text for labels */
+    font-weight: bold;
 }

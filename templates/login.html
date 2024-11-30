@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="pt-BR">
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
-  </head>
-  <body>
+</head>
+<body>
+    <div class="logos">
+      <p>Meu Logo</p>
+    </div>
     <div class="login-container">
-        <h2>Login</h2>
+        <h2>Página de Login</h2>
+        <div id="error-message" class="error">Login inválido</div>
         <form id="login-form" method="POST">
             <div class="input-container">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">Nome de usuário</label>
+                <input type="text" id="username" name="username">
             </div>
             <div class="input-container">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password">
             </div>
             <button type="submit">Login</button>
         </form>
     </div>
-  </body>
+    <div class="logos">
+        <p>Logo Padaria 1</p>
+        <p>Logo Padaria 2</p>
+    </div>
+</body>
 </html>
 

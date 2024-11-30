@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session, render_template
 import psycopg2
 from psycopg2 import sql
 from static.py.config.db import get_db_connection
+import bcrypt
 
 login_bp = Blueprint('login_bp', __name__)
 
@@ -36,17 +37,16 @@ def login():
     conn.close()
 
     if user:
-        stored_password = user[2]  # Assuming password is in the fourth column (index 3)
-
-        print(stored_password)
+        stored_password = user[2].encode('utf-8')  # Assuming password is in the fourth column (index 3)
         # Compare passwords directly
-        if password == stored_password:
+        if bcrypt.checkpw(password.encode('utf-8'), stored_password):
             session['logged_in'] = True  # Store user session
+            session['id_operador'] = user[0]
             return jsonify({'success': True}), 200
         else:
-            return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+            return jsonify({'success': False, 'message': 'Credenciais inválidas'}), 401
     else:
-        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+        return jsonify({'success': False, 'message': 'Credenciais inválidas'}), 401
 
 @login_bp.route('/logout', methods=['GET'])
 def logout_page():

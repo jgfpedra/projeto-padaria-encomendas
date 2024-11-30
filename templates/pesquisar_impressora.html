@@ -1,63 +1,102 @@
-{% extends 'base.html' %}
+{% extends 'menu.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Pesquisar Impressora{% endblock %}
 
 {% block content %}
 <head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pesquisar_impressora.css') }}">
   <script src="{{ url_for('static', filename='js/pesquisar_impressora.js') }}"></script>
 </head>
-    <div class="button-container">
-      <button onclick="window.location.href='{{ url_for('impressora_cadastrar_bp.impressora_cadastrar') }}'">Incluir</button>
-      <button type="submit" onclick="confirmDelete()">Deletar</button>
-      <button type="submit" onclick="redirectToEdit()">Editar</button>
-    </div>
-
-    <div class="button-container">
-      <form method="POST" action="{{ url_for('pesquisar_impressora_bp.pesquisar_impressora') }}" class="input-container">
-        <button type="submit">Pesquisar</button>
-        <label>ID <input type="text" name="id"></label>
-        <label>Descricao <input type="text" name="descricao"></label>
-        <label>Endereco (IP)<input type="text" name="endereco"></label>
-        <label>Tipo Impressora<input type="text" name="tipo_impressora"></label>
-        <label>Modelo Impressora<input type="text" name="modelo_impressora"></label>
-        <label>Porta<input type="text" name="porta"></label>
-        <label>Utiliza Guilhotina <input type="text" name="utiliza_guilhotina"></label>
+<body>
+  <div class="button-container">
+      <button id="pesquisarButton" class="icon-button">
+          <i class="fas fa-search"></i>
+          <span class="tooltip">Pesquisar</span>
+      </button>
+      <button onclick="window.location.href='{{ url_for('impressora_cadastrar_bp.impressora_cadastrar') }}'" class="icon-button">
+          <i class="fas fa-plus"></i>
+          <span class="tooltip">Incluir</span>
+      </button>
+      <button id="deleteButton" type="button" class="icon-button">
+          <i class="fas fa-trash"></i>
+          <span class="tooltip">Deletar</span>
+      </button>
+      <button id="editButton" type="button" class="icon-button">
+          <i class="fas fa-edit"></i>
+          <span class="tooltip">Editar</span>
+      </button>
+  </div>
+  <div id="error-message-container"></div>
+  <div class="input-container">
+      <form id="searchForm" method="POST" action="{{ url_for('pesquisar_impressora_bp.pesquisar_impressora') }}" class="search-form">
+          <label>
+              Código:
+              <input type="text" id="id" name="id" class="search-input" placeholder="Digite o ID">
+          </label>
+          <label>
+              Descrição:
+              <input type="text" id="descricao" name="descricao" class="search-input" placeholder="Digite a descrição">
+          </label>
+          <label>
+              Endereço (IP):
+              <input type="text" id="endereco" name="endereco" class="search-input" placeholder="Digite o endereço (IP)">
+          </label>
+          <label>
+              Porta:
+            <input type="text" name="porta" id="porta" required minlength="1" maxlength="5" pattern="^\d{1,5}$" title="Somente números de 0 a 65535 são permitidos" placeholder="Digite o numero da porta">
+          </label>
+          <div class="form-block">
+            <div class="form-field">
+              <label for="modelo_impressora">Modelo de Impressora:</label>
+              <select name="modelo_impressora" id="modelo_impressora" required>
+                <option value="BEMATECH">BEMATECH</option>
+                <option value="EPSON">EPSON</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-block">
+            <div class="form-field">
+              <label for="tipo_impressora">Tipo de Impressora:</label>
+              <select name="tipo_impressora" id="tipo_impressora" required onchange="atualizarCampos()">
+                <option value="REDE">REDE</option>
+                <option value="LOCAL">LOCAL</option>
+              </select>
+            </div>
+          </div>
       </form>
-    </div>
-
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Codigo</th>
-                <th>Loja</th>
-                <th>Descricao</th>
-                <th>Endereco (IP)</th>
-                <th>Tipo Impressao</th>
-                <th>Modelo Impressora</th>
-                <th>Porta</th>
-                <th>Utiliza Guilhotina</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for impressora in impressoras %}
-                <tr>
-                    <td><input type="radio" name="selected-impressora" value="{{ impressora[0] }}" class="impressora-radio"></td>
-                    <td>{{ impressora[0] }}</td>
-                    <td>{{ impressora[1] }}</td>
-                    <td>{{ impressora[2] }}</td>
-                    <td>{{ impressora[3] }}</td>
-                    <td>{{ impressora[4] }}</td>
-                    <td>{{ impressora[5] }}</td>
-                    <td>{{ impressora[6] }}</td>
-                    <td>{{ impressora[7] }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="8">Nenhuma impressora encontrado.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  </div>
+  <div class="table-container" id="impressoraTableContainer" style="display: none;">
+      <table class="results-table">
+          <thead>
+              <tr>
+                  <th>Código</th>
+                  <th>Descrição</th>
+                  <th>Endereço (IP)</th>
+                  <th>Porta</th>
+                  <th>Tipo Impressão</th>
+                  <th>Modelo Impressora</th>
+                  <th>Selecionado</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for impressora in impressoras %}
+                  <tr class="impressora-row">
+                      <td>{{ impressora.id }}</td>
+                      <td>{{ impressora.descricao }}</td>
+                      <td>{{ impressora.endereco }}</td>
+                      <td>{{ impressora.porta }}</td>
+                      <td>{{ impressora.tipo_impressora }}</td>
+                      <td>{{ impressora.modelo_impressora }}</td>
+                      <td>{{ impressora.selecionado }}</td>
+                  </tr>
+              {% else %}
+                  <tr>
+                      <td colspan="7">Nenhuma impressora encontrada.</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+</body>
 {% endblock %}
