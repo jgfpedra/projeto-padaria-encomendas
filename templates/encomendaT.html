@@ -191,7 +191,7 @@
                   </button>
               </form>
           {% endif %}
-          {% if session['client_id'] and not session.get('order_type') and not session.get('finalizar') %}
+          {% if session['client_id'] and not encomenda and not session.get('finalizar') %}
               <form id="orderForm" class="order-form" method="POST">
                   <label class="custom-radio">
                       <input type="radio" name="orderType" value="retirada" checked>
@@ -203,20 +203,19 @@
                   </label>
                   <div id="entregaDetails">
                       <label for="entregaDate">Data de Entrega:</label>
-                      <input type="date" id="entrega_date" name="entrega_date" class="input-large">
+                      <input type="date" id="entregaDate" name="entrega_date" class="input-large">
                       <label for="entregaTime">Horário de Entrega:</label>
-                      <input type="time" id="entrega_time" name="entrega_time" class="input-large">
+                      <input type="time" id="entregaTime" name="entrega_time" class="input-large">
                   </div>
                   <button type="submit" class="btn btn-primary">
                       <i class="fas fa-cart-plus"></i> Criar Encomenda
                   </button>
               </form>
           {% endif %}
-          {% if session.get('order_type') and not session.get('finalizar') %}
+          {% if encomenda and not session.get('finalizar') %}
               <div class="telephone-input">
                   <h2>Adicionar Produtos à Encomenda</h2>
-                  {% if not session.get('product_id') %}
-                      {% if encomenda %}
+                  {% if not product_id %}
                       <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=encomenda[11]) }}">
                           <label for="product_id">ID do Produto:</label>
                           <input type="number" class="input-large" id="product_id" name="product_id" {% if encomenda[1] == 'Finalizado' %} disabled {% endif %}  required>
@@ -226,49 +225,21 @@
                               </button>
                           </div>
                       </form>
-                      {% else %}
-                        <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
-                            <label for="product_id">ID do Produto:</label>
-                            <input type="number" class="input-large" id="product_id" name="product_id" required>
-                            <div class="button-container">
-                                <button type="submit" class="btn" aria-label="Adicionar Produto">
-                                    <i class="fas fa-plus-circle"></i> Adicionar Produto
-                                </button>
-                            </div>
-                        </form>
-                      {% endif %}
                   {% else %}
-                      {% if encomenda %}
-                          <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=encomenda[11]) }}">
-                              {% if tipoembalagem == 'KG' %}
-                                  <label for="quantity">Quantidade (Kg):</label>
-                                  <input type="text" class="input-large" id="quantity" name="quantity" step="0.001" required>
-                              {% elif tipoembalagem == 'UN' %}
-                                  <label for="quantity">Quantidade (Un):</label>
-                                  <input type="number" id="quantity" name="quantity" required>
-                              {% endif %}
-                              <div class="button-container">
-                                  <button type="submit" class="btn" aria-label="Adicionar Quantidade">
-                                      <i class="fas fa-plus-circle"></i> Adicionar Quantidade
-                                  </button>
-                              </div>
-                          </form>
-                      {% else %}
-                           <form method="post" action="{{ url_for('encomenda_bp.encomenda') }}">
-                              {% if session.get('tipoembalagem') == 'KG' %}
-                                  <label for="quantity">Quantidade (Kg):</label>
-                                  <input type="text" class="input-large" id="quantity" name="quantity" step="0.001" required>
-                              {% elif session.get('tipoembalagem') == 'UN' %}
-                                  <label for="quantity">Quantidade (Un):</label>
-                                  <input type="number" id="quantity" name="quantity" required>
-                              {% endif %}
-                              <div class="button-container">
-                                  <button type="submit" class="btn" aria-label="Adicionar Quantidade">
-                                      <i class="fas fa-plus-circle"></i> Adicionar Quantidade
-                                  </button>
-                              </div>
-                          </form>
-                      {% endif %}
+                      <form method="post" action="{{ url_for('encomenda_bp.encomenda', date=encomenda[12], encomenda_id=encomenda[11]) }}">
+                          {% if tipoembalagem == 'KG' %}
+                              <label for="quantity">Quantidade (Kg):</label>
+                              <input type="text" class="input-large" id="quantity" name="quantity" step="0.001" required>
+                          {% elif tipoembalagem == 'UN' %}
+                              <label for="quantity">Quantidade (Un):</label>
+                              <input type="number" id="quantity" name="quantity" required>
+                          {% endif %}
+                          <div class="button-container">
+                              <button type="submit" class="btn" aria-label="Adicionar Quantidade">
+                                  <i class="fas fa-plus-circle"></i> Adicionar Quantidade
+                              </button>
+                          </div>
+                      </form>
                   {% endif %}
               </div>
             {% endif %}

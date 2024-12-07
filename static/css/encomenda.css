@@ -1,61 +1,81 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #D8D5DB; /* Fundo da página com a cor #D8D5DB */
-    color: #5A4B3A; /* Cor do texto #5A4B3A */
+    background-color: #D8D5DB;
+    color: #5A4B3A;
 }
 
-/* Button container styles */
-.button-container {
+.button-container, .button-grid {
     display: flex;
     gap: 10px;
+    margin-top: 10px;
     margin-bottom: 15px;
 }
 
-.button-container button {
-    padding: 5px 15px;
-    cursor: pointer;
-    background-color: #E8A257; /* Botões com a cor #E8A257 */
-    color: white;
+.button-container button, .button-criar-encomenda, button[type="submit"], .button-grid button {
+    display: block;
+    padding: 10px 20px;
+    width: 100%;
+    background-color: #E8A257;
+    color: #5A4B3A;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s;
 }
 
-.button-container button:hover {
-    background-color: #CD853F; /* Hover em botões com a cor mais escura */
+.button-container button:hover, .button-criar-encomenda:hover, .button-grid button:hover {
+    background-color: #CD853F;
 }
 
-/* Style for the main grid container */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 150px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
 .main-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
-    background-color: #EAE8FF; /* Cor de fundo clara para a área principal */
+    background-color: #EAE8FF;
     padding: 20px;
 }
 
-/* Info grid container */
-.info-grid {
+.info-grid, .totals-grid {
     display: grid;
-    grid-template-rows: repeat(3, auto);
-    gap: 20px;
-    background-color: #EAE8FF; /* Fundo do grid de informações com #EAE8FF */
+    gap: 15px;
+    background-color: #EAE8FF;
     padding: 10px;
-    border: 1px solid #D8D5DB; /* Bordas com a cor #D8D5DB */
+    border: 1px solid #D8D5DB;
 }
 
-/* Order info and product info */
-.order-info, .product-info {
+.order-info, .product-info, .client-info {
     padding: 10px;
-    border: 1px solid #B5ACAD; /* Bordas dos painéis de informações com #B5ACAD */
-    background-color: #FFF; /* Fundo branco para se destacar */
-}
-
-h3 {
-    margin-top: 0;
-    font-size: 16px;
-    margin-bottom: 10px;
+    border: 1px solid #B5ACAD;
+    background-color: #FFF;
 }
 
 .order-info label, .totals-info label {
@@ -63,35 +83,95 @@ h3 {
     margin-bottom: 5px;
 }
 
-/* Table styles */
+.totals-info input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.product-info {
+    max-height: 500px;
+    overflow: auto; /* Ativa a rolagem quando o conteúdo exceder o limite */
+}
+
 .product-info table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .product-info th, .product-info td {
-    border: 1px solid #B5ACAD; /* Bordas da tabela com #B5ACAD */
+    border: 1px solid #B5ACAD;
     padding: 8px;
     text-align: left;
 }
 
-/* Totals grid */
-.totals-grid {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 15px;
-    padding: 10px;
-    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
-    background-color: #EAE8FF; /* Cor de fundo #EAE8FF */
+.product-info .observation-cell {
+    max-width: 100%;
+    width: auto;
+    vertical-align: top;
+    padding: 5px;
 }
 
-/* Form styles */
+.product-info .observation-text-wrapper {
+    max-width: 100%;
+}
+
+.product-info .observation-text-wrapper span {
+    display: block;
+}
+
+.product-info tr.selectable-row.selected {
+    background-color: #D8D5DB; /* Fundo destacado ao selecionar a linha */
+}
+
 .order-form {
-    background-color: #EAE8FF; /* Fundo claro para o formulário */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+    background-color: #EAE8FF;
     padding: 20px;
-    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
+    border: 1px solid #D8D5DB;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-encomenda {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.telephone-input input, .ending-input input {
+    width: 100%; /* Garante que o input ocupe toda a largura disponível */
+    max-width: 100%; /* Impede que o input ultrapasse o limite do container */
+    box-sizing: border-box; /* Controla o tamanho sem quebrar o layout */
+}
+
+.form-encomenda input{
+    width: 100%; /* Garante que o input ocupe toda a largura disponível dentro do container */
+    max-width: 100%; /* Impede que o input ultrapasse o limite máximo do container */
+    box-sizing: border-box;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #B5ACAD;
+    border-radius: 5px;
+}
+
+.form-encomenda button[type="submit"] {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #E8A257;
+    color: #5A4B3A;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
 .order-form label {
@@ -100,97 +180,106 @@ h3 {
     margin-bottom: 10px;
 }
 
-/* Custom radio button styles */
+.input-large, input[type="number"] {
+    width: 100%; /* Ajusta a largura para 100% do container */
+    max-width: 100%; /* Garante que não ultrapasse a largura do container */
+    box-sizing: border-box; /* Garantir que o padding não quebre o layout */
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #B5ACAD;
+    border-radius: 5px;
+}
+
 .custom-radio {
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin-right: 15px; /* Espaço entre os botões */
+    margin-right: 15px;
 }
 
 .custom-radio input {
-    display: none; /* Esconde o botão de rádio padrão */
+    display: none;
 }
 
 .radio-btn {
     padding: 10px 20px;
-    background-color: #EAE8FF; /* Cor de fundo clara */
-    border: 1px solid #B5ACAD; /* Bordas com a cor #B5ACAD */
+    background-color: #EAE8FF;
+    border: 1px solid #B5ACAD;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .custom-radio input:checked + .radio-btn {
-    background-color: #E8A257; /* Cor de fundo quando o botão de rádio está ativo */
-    color: white; /* Texto branco quando ativo */
+    background-color: #E8A257;
+    color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Delivery details */
 #entregaDetails {
+    width: 100%; /* Garante que os inputs dentro de #entregaDetails se ajustem ao container */
+    max-width: 100%; /* Impede que ultrapassem a largura do container */
+    box-sizing: border-box;
     margin-top: 15px;
+    margin-bottom: 15px;
     padding: 15px;
-    border: 1px solid #B5ACAD; /* Bordas com #B5ACAD */
+    border: 1px solid #B5ACAD;
     border-radius: 4px;
-    background-color: #FFF; /* Fundo branco para detalhes de entrega */
 }
 
-/* Style for table rows with hover effect */
-.product-info tr.selectable-row {
-    cursor: pointer;
-}
-
-.product-info tr.selectable-row:hover {
-    background-color: #F1F1F1; /* Fundo mais claro ao passar o mouse */
-}
-
-/* Highlight for selected rows */
-.product-info tr.selectable-row.selected {
-    background-color: #D8D5DB; /* Fundo destacado ao selecionar a linha */
-}
-
-/* Totals info */
 .totals-info {
     display: grid;
     gap: 10px;
 }
 
-/* Button grid styles */
-.button-grid {
-    grid-column: span 2; /* O botão ocupa ambas as colunas do grid */
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #EAE8FF; /* Cor de fundo do grid de botões */
-    border: 1px solid #D8D5DB; /* Bordas com #D8D5DB */
-    margin-top: 20px;
-}
-
-.button-grid button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #E8A257; /* Cor de fundo dos botões */
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.button-grid button:hover {
-    background-color: #CD853F; /* Cor mais escura ao passar o mouse */
-}
-
 .client-info, .order-info {
-    position: relative;
-    padding: 10px;
-    border: 1px solid #B5ACAD; /* Bordas com #B5ACAD */
-    background-color: #FFF; /* Fundo branco */
-    max-height: 200px;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
+    padding: 15px;
+    max-height: 100px; /* Defina uma altura máxima que seja adequada para a sua necessidade */
+    overflow-y: auto; /* Permite a rolagem quando o conteúdo exceder a altura máxima */
+}
+
+.client-info h3, .order-info h3 {
+    margin-top: 0; /* Remove a margem superior */
+    margin-bottom: 10px; /* Espaçamento entre o título e o conteúdo */
+}
+
+.info-row {
+    display: flex;
+    flex-wrap: wrap; /* Permite que o conteúdo quebre para a próxima linha, se necessário */
+    gap: 15px;
+    margin-bottom: 10px; /* Espaço entre as linhas de informações */
+}
+
+.info-row label {
+    font-weight: bold;
+    display: inline-block; /* O label ocupa apenas o espaço necessário */
+    width: auto; /* Não força o label a ocupar toda a largura */
+    margin-right: 5px; /* Espaço entre o label e o valor */
+}
+
+.info-row span {
+    display: inline-block; /* O valor ocupa o espaço necessário */
+    margin-bottom: 5px; /* Pequeno espaçamento entre as informações */
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 768px) {
+    .info-row {
+        flex-direction: column; /* Empilha as informações em telas menores */
+    }
+
+    .info-row label, .info-row span {
+        width: auto; /* Garante que o label e o span ocupem apenas o espaço necessário */
+    }
+}
+
+.observation-cell {
+  max-width: 10ch; /* Fixa a largura máxima em cerca de 100 caracteres */
+  padding: 5px; /* Espaçamento interno opcional */
+  box-sizing: border-box; /* Inclui padding e bordas no cálculo da largura total */
 }
 
 .selectable-row.selected {

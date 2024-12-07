@@ -23,15 +23,17 @@ def add_encomenda(conn, situacao, data_encomenda, hora_encomenda, tipo, loja, cl
     with conn.cursor() as cur:
         cur.execute("SELECT data_criacao, encomenda_id FROM encomenda ORDER BY id DESC LIMIT 1")
         last_order_data = cur.fetchone()
-        if last_order_data:
-            last_date = last_order_data[0]
+
+        if last_order_data:  # Check if last_order_data is not empty
+            last_date = last_order_data[0]  # Unpack the first element of the outer tuple
             last_id = last_order_data[1]
             if last_date == data_criacao:
                 encomenda_id = last_id + 1
             else:
-                encomenda_id = 1
+                encomenda_id = 1  # Default logic
         else:
             encomenda_id = 1
+
         cur.execute("""INSERT INTO encomenda (situacao, data_encomenda, hora_encomenda,
             tipo, loja, cliente_id, encomenda_id, data_criacao, hora_criacao) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -207,61 +209,39 @@ def handle_product_id(conn, product_id, encomenda_id):
             flash('Product ID not found.', 'error')
             session.pop('product_id', None)
 
-def handle_product_addition(conn_vr, conn, encomenda_id):
-    print("a")
-    order_type = session.get('order_type')
-    entrega_date = session.get('entrega_date')
-    entrega_time = session.get('entrega_time')
-    product_id = request.form.get('product_id', '')
-    quantity = request.form.get('quantity', '')
-    print(order_type, entrega_date, entrega_time, product_id)
-    if product_id and encomenda_id and not quantity:
-        session['date'] = date
-        session['product_id'] = int(product_id)
-        handle_product_id(conn_vr, product_id, encomenda_id)
-    elif product_id and not quantity:
-        session['product_id'] = int(product_id)
-        handle_product_id(conn_vr, product_id, encomenda_id)
-    elif quantity and 'product_id' in session:
-        try:
-            if encomenda_id:
-                valor_item = fetch_product_price(conn_vr.cursor(), session['product_id'])
-                valor_item_total = valor_item * Decimal(quantity)
-                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total, date)
-                session.pop('product_id', None)
-            else:
-                print("awd")
-                valor_item = fetch_product_price(conn_vr.cursor(), session['product_id'])
-                valor_item_total = valor_item * Decimal(quantity)
-                encomenda_id, date = create_encomenda(conn, session['client_id'], session.get('entrega_date'), session.get('entrega_time'))
-                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total, date)
-                session['encomenda_id'] = encomenda_id
-                session['date'] = date
-                session.pop('product_id', None)
-                session.pop('client_id')
-                session.pop('order_type')
-                session.pop('entrega_date')
-                session.pop('entrega_time')
-            flash('Produto adicionado com sucesso.', 'success')
-        except Exception as e:
-            flash(f'Erro ao adicionar o produto: {e}', 'error')
+def handle_product_addition(conn_vr, conn, date, encomenda_id):
+    if encomenda_id:
+        product_id = request.form.get('product_id', '')
+        quantity = request.form.get('quantity', '')
 
-def handle_tipo_encomenda():
-    session['order_type'] = request.form.get('orderType')  # Tipo de encomenda: 'entrega' ou 'retirada'
-    session['entrega_date'] = request.form.get('entrega_date')  # Data de entrega
-    session['entrega_time'] = request.form.get('entrega_time')  # Hora de entrega
-    return True
+        if product_id and not quantity:
+            session['encomenda_id'] = encomenda_id
+            session['date'] = date
+            session['product_id'] = int(product_id)
+            handle_product_id(conn_vr, product_id, encomenda_id)
+
+        elif quantity and 'product_id' in session:
+            try:
+                print(quantity)
+                valor_item = fetch_product_price(conn_vr.cursor(), session['product_id'])
+                valor_item_total = valor_item * Decimal(quantity)
+                add_item_to_encomenda(conn, encomenda_id, session['product_id'], quantity, valor_item, valor_item_total, date)
+                session.pop('product_id', None)
+                flash('Product added successfully.', 'success')
+            except Exception as e:
+                flash(f'Error adding product: {e}', 'error')
 
 def handle_post_requests(conn, conn_vr, date, encomenda_id):
     if 'cellphone' in request.form:
         return handle_cellphone_request(conn, encomenda_id)
+    if session.get('client_id') and 'orderType' in request.form:
+        return handle_tipo_encomenda(conn, encomenda_id)
     if 'finalizar' in request.form:
         return handle_finalize_request(encomenda_id)
-    if session.get('client_id') and 'orderType' in request.form:
-        print("c")
-        return handle_tipo_encomenda()
     if session.get('finalizar', False):
         return handle_finalization(conn, conn_vr, encomenda_id)
+    if session.get('client_id'):
+        session.pop('client_id')
     handle_product_addition(conn_vr, conn, date, encomenda_id)
     return False
 
@@ -273,6 +253,20 @@ def handle_cellphone_request(conn, encomenda_id):
     except ValueError as e:
         flash(str(e), 'error')
         return False
+    return True
+
+def handle_tipo_encomenda(conn, encomenda_id):
+    order_type = request.form.get('orderType')
+    entrega_date = request.form.get('entregaDate')
+    entrega_time = request.form.get('entregaTime')
+
+    if order_type == 'entrega' and entrega_date and entrega_time:
+        encomenda_id, date = create_encomenda(conn, session['client_id'], entrega_date, entrega_time)
+    else:
+        encomenda_id, date = create_encomenda(conn, session['client_id'])  # Default to Retirada
+    session['encomenda_id'] = encomenda_id
+    session['date'] = date
+    session.pop('client_id')
     return True
 
 def create_encomenda(conn, client_id, data_encomenda=None, hora_encomenda=None):
@@ -442,9 +436,7 @@ def encomenda(date=None, encomenda_id=None):
         session['encomenda_id'] = encomenda_id
         session['date'] = date
         if request.method == 'POST':
-            print("c")
             if handle_post_requests(conn, conn_vr, date, encomenda_id):
-                print("d")
                 return redirect(url_for('encomenda_bp.encomenda',
                                         date=session.get('date'),
                                         encomenda_id=session.get('encomenda_id')))
@@ -455,5 +447,4 @@ def encomenda(date=None, encomenda_id=None):
     finally:
         conn.close()
         conn_vr.close()
-    print("e")
     return render_template('encomenda.html', **context)

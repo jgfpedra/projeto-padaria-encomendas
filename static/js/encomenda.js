@@ -2,37 +2,47 @@ document.addEventListener('DOMContentLoaded', function() {
     const observationCells = document.querySelectorAll('td.observation-cell');
     const itemRows = document.querySelectorAll('tr.selectable-row');
     const deleteForm = document.querySelector('.delete-form');
-    const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');
     const entregaDetails = document.getElementById('entregaDetails');
+    const quantityInput = document.getElementById('quantity');
+    const encomendaStatus = document.getElementById('encomenda-status').getAttribute('data-status');
 
-    orderTypeRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            entregaDetails.style.display = radio.value === 'entrega' ? 'block' : 'none';
+    if (quantityInput) {
+        quantityInput.addEventListener('input', function(e) {
+            let value = e.target.value;
+            value = value.replace(',', '.');
+            let numericValue = parseFloat(value);
+            if (!isNaN(numericValue)) {
+                if (numericValue > 9999) {
+                    value = '9999';
+                } else if (value.includes('.') && value.split('.')[1].length > 2) {
+                    value = value.substring(0, value.indexOf('.') + 3);
+                }
+            } else {
+                value = '';
+            }
+            e.target.value = value;
         });
-    });
+    }
 
     observationCells.forEach(cell => {
+        if (encomendaStatus === 'Finalizado') {
+            console.log("a");
+            cell.style.pointerEvents = 'none';
+            cell.classList.add('disabled');
+            return;
+        }
         cell.addEventListener('click', function() {
-            // Check if the input already exists
             if (this.querySelector('input')) return;
-
             const observationText = this.querySelector('.observation-text');
             const currentObservation = observationText.textContent.trim();
-
-            // Create an input element
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = currentObservation;
-
-            // Replace the text with the input field
-            this.replaceChild(input, observationText);
+            const inputHtml = `<input type="text" value="${currentObservation}">`;
+            this.innerHTML = inputHtml;
+            const input = this.querySelector('input');
             input.focus();
-
-            // Handle losing focus or pressing Enter
             input.addEventListener('blur', () => saveObservation(cell, input.value));
             input.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
-                    event.preventDefault(); // Prevent form submission if in a form
+                    event.preventDefault();
                     saveObservation(cell, input.value);
                 }
             });
@@ -41,34 +51,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     itemRows.forEach(row => {
         row.addEventListener('click', function () {
-            // Deselect any previously selected row
             const selectedRow = document.querySelector('.selected');
             if (selectedRow && selectedRow !== this) {
                 selectedRow.classList.remove('selected');
             }
-
-            // Populate the hidden input fields in the form
             const itensEncomendaId = this.dataset.itensEncomendaId;
             const idProduto = this.dataset.idProduto;
             const date = this.dataset.date;
-
             document.getElementById('delete-itens-encomenda-id').value = itensEncomendaId;
             document.getElementById('delete-product-id').value = idProduto;
             document.getElementById('delete-date').value = date;
-
-            // Select the current row
             this.classList.toggle('selected');
         });
     });
 
     if(deleteForm != null){
       deleteForm.addEventListener('submit', function (event) {
-          event.preventDefault(); // Stop the form submission
-
+          event.preventDefault();
           const itensEncomendaId = document.getElementById('delete-itens-encomenda-id').value;
           const idProduto = document.getElementById('delete-product-id').value;
           const date = document.getElementById('delete-date').value;
-
           const confirmation = confirm('Do you want to delete this item?');
           if (confirmation) {
               deleteItem(itensEncomendaId, idProduto, date);
@@ -95,24 +97,19 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            // Remove the row from the DOM or hide it
             const row = document.querySelector(`tr[data-itens-encomenda-id="${itensEncomendaId}"][data-id-produto="${idProduto}"]`);
             if (row) {
-                row.remove(); // Remove the row from the table
+                row.remove();
             }
         })
         .catch(error => {
             console.error('Error deleting item:', error);
         });
     }
-
     function saveObservation(cell, newObservation) {
         const itensEncomendaId = cell.dataset.itensEncomendaId;
         const idProduto = cell.dataset.idProduto;
-
-        // Check if the new observation is empty
         if (!newObservation.trim()) {
-            // If empty, send a request to delete the observation
             fetch(`/delete_observacao`, {
                 method: 'POST',
                 headers: {
@@ -130,22 +127,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Handle success response
                 const span = document.createElement('span');
                 span.classList.add('observation-text');
-                span.textContent = ''; // Clear the observation text
+                span.textContent = '';
                 cell.replaceChild(span, cell.querySelector('input'));
             })
             .catch(error => {
                 console.error('Error deleting observation:', error);
-                // Optionally revert to original text if there's an error
                 const span = document.createElement('span');
                 span.classList.add('observation-text');
-                span.textContent = cell.querySelector('input').value; // Revert to input value
+                span.textContent = cell.querySelector('input').value;
                 cell.replaceChild(span, cell.querySelector('input'));
             });
         } else {
-            // If not empty, proceed to update the observation
             fetch('/update_observacao', {
                 method: 'POST',
                 headers: {
@@ -164,14 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Handle success response
                 const span = document.createElement('span');
                 span.classList.add('observation-text');
                 span.textContent = newObservation; // Update with the new observation
                 cell.replaceChild(span, cell.querySelector('input'));
             })
             .catch(error => {
-                // Revert to original text if there's an error
                 const span = document.createElement('span');
                 span.classList.add('observation-text');
                 span.textContent = cell.querySelector('input').value; // Revert to input value
@@ -183,18 +175,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function formatCellphone() {
     const input = document.getElementById('cellphone');
-    let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
-
-    // Limit to 11 digits
+    let value = input.value.replace(/\D/g, '');
     if (value.length > 11) {
         value = value.slice(0, 11);
     }
-
-    // Format to (99)999999999 or (99)99999999
     if (value.length <= 11) {
         value = value.replace(/^(\d{2})(\d{0,9})$/, '($1)$2');
     }
-
     input.value = value;
 }
 
